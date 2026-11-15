@@ -35,5 +35,6 @@ for the rate to mean much: about 200,000 cycles a second.
 gives `1`, `2147483647 + 1` gives `-2147483648`, and
 `-2147483648 % -1` gives `0`.
 
-Yosys was not installed, so `cpu.v` was not synthesised; the 50 MHz in
-the chapter is arithmetic.
+The 50 MHz in the chapter is arithmetic: nothing here measures a clock
+rate. Yosys counts cells for exercise 3 (`answers/size.py`), with no
+place and route, and so no timing.

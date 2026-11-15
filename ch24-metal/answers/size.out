@@ -1,0 +1,5 @@
+                   LUT4  carry  flops  levels
+add                  32     31      0      32
+mul                1330     22      0      31
+div, one cycle      862   1144      0    1089
+div, 32 cycles      470    156    138     101

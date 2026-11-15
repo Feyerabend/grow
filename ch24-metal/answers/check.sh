@@ -34,3 +34,10 @@ answer suite sh -c "cd .. && for v in heap pipe div trace pair; do
     done"
 answer cycles python3 cycles.py
 answer compare python3 compare.py
+# Exercise 3's sizes, if Yosys is installed: the dividers beside an adder
+# and a multiplier (size.py cpu, the whole CPU, takes minutes and is not run).
+if command -v yosys > /dev/null; then
+    answer size python3 size.py units
+else
+    echo "answers: size not checked: Yosys is not installed"
+fi

@@ -384,4 +384,5 @@ def main():
                     os.path.join(folder, "tb.v"), os.path.join(folder, "cpu.v")], check=True)
 
 
-main()
+if __name__ == "__main__":
+    main()
