@@ -1,0 +1,9 @@
+; exercise 5: n in the frame, a and b juggled above it
+        PUSH 10  CALL fibs 1  DROP  HALT
+fibs:   PUSH 0  PUSH 1                  ; n | a b
+loop:   LOAD 0  JZ end
+        OVER  PRINT                     ; print a
+        SWAP  OVER  ADD                 ; n | b (a + b)
+        LOAD 0  PUSH 1  SUB  STORE 0    ; n - 1
+        JMP loop
+end:    PUSH 0  RET

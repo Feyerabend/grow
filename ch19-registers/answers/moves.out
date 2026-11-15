@@ -1,0 +1,17 @@
+instructions run                   stack  shuffle   locals     both   not run
+fib                           26,925,370     0.0%    25.0%    25.0%     45.0%
+loop                         260,000,007     0.0%    46.2%    46.2%     61.5%
+sieve                         33,826,936     0.0%    45.6%    45.6%     49.3%
+basal-countdown                      453     3.1%     6.0%     9.1%     20.8%
+basal-extremes                       669     4.8%    15.1%    19.9%     34.1%
+basal-hurkle                       2,782     2.1%     0.9%     2.9%      4.0%
+basal-table                        5,948     4.0%     8.4%    12.4%     22.3%
+enkel-bits                           417     4.3%    32.6%    36.9%     48.2%
+enkel-bubble-sort                  2,263     3.8%    31.3%    35.0%     36.9%
+enkel-gcd-negative-num               147     8.2%    35.4%    43.5%     31.3%
+enkel-hanoi                          802     9.6%    26.3%    35.9%     22.6%
+enkel-recursive-factorial            197     5.1%    23.4%    28.4%     33.5%
+enkel-sieve                        9,141     0.0%     0.0%     0.0%     10.0%
+heap-lists                           985     4.5%    31.1%    35.5%     39.4%
+heap-strings                         257     1.9%    40.9%    42.8%     47.5%
+samples, as written                 1988     3.3%     7.9%    11.2%

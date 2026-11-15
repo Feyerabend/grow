@@ -1,0 +1,3 @@
+the loop is 30 bytes, and 33 with LDY and BRK
+14 bytes: HELLO, SWEET16, 170 instructions
+300 bytes across pages: the same, 3607 instructions

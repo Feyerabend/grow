@@ -1,0 +1,4 @@
+20000 assignments, then 26 prints
+  basal.py, every token held:     peak    98.3 MB
+  basal_stream.py, line by line:  peak    44.1 KB
+  what the stream keeps to the end: 26 variables, 0 labels, 0 uses of labels

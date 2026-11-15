@@ -1,0 +1,14 @@
+cycles                          cpu     pipe      div     pair  fused
+basal-countdown                 454      516      718      454      0
+basal-extremes                  670      755     2617      670      0
+basal-hurkle                   2783     2902     3113     2783      0
+basal-table                    5949     6710    12450     5949      0
+enkel-bits                      418      461     1210      418      0
+enkel-bubble-sort              2264     2408     2264     2050    214
+enkel-gcd-negative-num          148      168      247      148      0
+enkel-hanoi                     803      912      803      803      0
+enkel-recursive-factorial       198      228      198      198      0
+enkel-sieve                    9142     9751     9142     9142      0
+fib                          218911   273639   218911   218911      0
+PUSH -7, PUSH 2, DIV, PRINT, and the same with MOD, HALT, on cpu: 10 cycles, printing -3 -1
+PUSH -7, PUSH 2, DIV, PRINT, and the same with MOD, HALT, on div: 76 cycles, printing -3 -1

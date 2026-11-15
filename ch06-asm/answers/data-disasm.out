@@ -1,0 +1,4 @@
+        JMP 3               ; 0
+        PUSH 1              ; 2
+        JZ 5                ; 4
+        HALT                ; 6

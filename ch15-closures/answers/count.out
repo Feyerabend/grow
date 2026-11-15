@@ -1,0 +1,4 @@
+lambda_more.py 
+trap: stack overflow at 52
+lambda_more.py -tail
+1000000

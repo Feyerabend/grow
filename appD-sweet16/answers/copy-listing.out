@@ -1,0 +1,21 @@
+   77  15 1             copy:   LOAD 1          ; to, for STOREM
+   79  15 0                     LOAD 0
+   81  24                       LOADM           ; the value at from
+   82  25                       STOREM          ; to it
+   83  15 0                     LOAD 0          ; from + 1
+   85  1 1                      PUSH 1
+   87  2                        ADD
+   88  16 0                     STORE 0
+   90  15 1                     LOAD 1          ; to + 1
+   92  1 1                      PUSH 1
+   94  2                        ADD
+   95  16 1                     STORE 1
+   97  15 2                     LOAD 2          ; count - 1, kept, and tested
+   99  1 1                      PUSH 1
+  101  3                        SUB
+  102  8                        DUP
+  103  16 2                     STORE 2
+  105  7 109                    JZ done
+  107  6 77                     JMP copy
+  109  1 0              done:   PUSH 0
+  111  18                       RET

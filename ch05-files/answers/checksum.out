@@ -1,0 +1,6 @@
+gcd: 152 bytes, 1000 damaged copies
+fib: 104 bytes, 1000 damaged copies
+primes: 268 bytes, 1000 damaged copies
+
+all 3000:
+   3000  100.0%  refused by the loader   (header 158, code 2842)

@@ -1,0 +1,10 @@
+; Exercise D.1, run: A030 to A03F are first filled with FF, so that the
+; zeros can be seen; then come the bytes of zero.s16, assembled by hand.
+
+        SET R0, $FF
+        SET R1, $A030
+        SET R2, 16
+fill:   ST @R1
+        DCR R2
+        BNZ fill
+        DB $11, $34, $A0, $12, $09, $00, $B0, $51, $F2, $07, $FC, $00

@@ -1,0 +1,22 @@
+#!/bin/sh
+# Exercises 22.1 and 22.2: compile a program with vm2c_more.py and run it,
+# as vmc does with vm2c.py, so that the suite can test it as one machine.
+# The way of compiling is in VM2C_MORE: -cache, -calls, or both.
+#
+#     VM2C_MORE=-cache vmc-more [-g mark | -g copy] [-S] program.vm
+
+dir=$(cd "$(dirname "$0")" && pwd)
+chapter=$(cd "$dir/.." && pwd)
+for last; do :; done
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+python3 "$dir/vm2c_more.py" $VM2C_MORE "$last" > "$work/p.c" || exit $?
+${CC:-cc} -O1 -w -I"$chapter" "$work/p.c" -o "$work/p" || exit 4
+n=$#
+i=1
+for arg; do
+    if [ $i -lt $n ]; then set -- "$@" "$arg"; fi
+    i=$((i + 1))
+done
+shift $n
+"$work/p" "$@"

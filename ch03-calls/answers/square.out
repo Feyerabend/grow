@@ -1,0 +1,8 @@
+printed: 25
+instructions: 15
+   locals       4
+   calls        4
+   work         6
+   stopping     1
+most frames: 1
+deepest stack: 4

@@ -1,0 +1,22 @@
+; Exercise 2: a block of two by two drawn at 8,8 and another at 9,9, so
+; that they overlap by one spot; then the first drawn again. VF after
+; each of the last two draws is kept, and drawn as a digit at the top.
+
+A222    ; 200  I := 222             the block, below
+6008    ; 202  V0 := 8
+D002    ; 204  draw 2 rows at V0, V0: the first block, at 8,8
+6209    ; 206  V2 := 9
+D222    ; 208  the second, at 9,9: they share the spot 9,9
+8AF0    ; 20A  VA := VF
+D002    ; 20C  the first again
+8BF0    ; 20E  VB := VF
+6328    ; 210  V3 := 40             x
+6400    ; 212  V4 := 0              y
+FA29    ; 214  I := the picture of digit VA
+D345    ; 216  draw it
+7306    ; 218  V3 += 6
+FB29    ; 21A  digit VB
+D345    ; 21C
+121E    ; 21E  the end
+C0C0    ; 220  (padding, never run)
+C0C0    ; 222  the block: two rows of two spots

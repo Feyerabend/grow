@@ -1,0 +1,18 @@
+instructions run                       stack      register      with JGE  fewer
+fib                               26,925,370    14,808,955    12,116,418  18.2%
+loop                             260,000,007   100,000,005   100,000,005   0.0%
+sieve                             33,826,936    17,152,655    14,761,805  13.9%
+basal-countdown                          453           359           346   3.6%
+basal-extremes                           669           441           404   8.4%
+basal-hurkle                           2,782         2,672         2,595   2.9%
+basal-table                            5,948         4,623         4,322   6.5%
+enkel-bits                               417           216           208   3.7%
+enkel-bubble-sort                      2,263         1,427         1,382   3.2%
+enkel-gcd-negative-num                   147           101            97   4.0%
+enkel-hanoi                              802           621           590   5.0%
+enkel-recursive-factorial                197           131           131   0.0%
+enkel-sieve                            9,141         8,224         7,775   5.5%
+heap-lists                               985           597           575   3.7%
+heap-strings                             257           135           120  11.1%
+ltref                                      4             3             3   0.0%
+  trap: not a number at 5; status 1

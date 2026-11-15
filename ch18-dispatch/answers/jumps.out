@@ -1,0 +1,4 @@
+            switch        goto      spread    threaded    indirect  subroutine
+-O2              1           2          32          31          31  0 + 1 call
+-O0              1           1           1           1           1  0 + 1 call
+(indirect jumps, br; and indirect calls, blr)

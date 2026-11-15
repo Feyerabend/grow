@@ -1,0 +1,7 @@
+; exercise 5, with exercise 3's JNZ: one jump a round
+        PUSH 0 PUSH 1
+loop:   OVER PRINT
+        SWAP OVER ADD
+        OVER PUSH 55 LT
+        JNZ loop
+        HALT

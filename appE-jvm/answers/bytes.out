@@ -1,0 +1,4 @@
+chapter 10's machine:            72 233  10                                                    
+this JVM, print(char):            72 195 169  10                                                
+this JVM, write(int):            72 233  10                                                    
+and the samples print as before

@@ -1,0 +1,2 @@
+error: cannot unify Int with String
+status 1

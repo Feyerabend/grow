@@ -1,0 +1,10 @@
+       109     31  LOAD 1
+       109     33  LOAD 1
+       109     35  MUL
+       109     36  LOAD 0
+       109     38  SWAP
+       109     39  LT
+       109     40  JZ 45
+        94     45  LOAD 0
+        94     47  LOAD 1
+        94     49  MOD

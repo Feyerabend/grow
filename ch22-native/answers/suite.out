@@ -1,0 +1,9 @@
+vm2c_more.py -cache
+answers/vmc-more: 71 of 71 passed
+answers/vmc-more -g copy -S: 71 of 71 passed
+vm2c_more.py -calls
+answers/vmc-more: 71 of 71 passed
+answers/vmc-more -g copy -S: 71 of 71 passed
+vm2c_more.py -cache -calls
+answers/vmc-more: 71 of 71 passed
+answers/vmc-more -g copy -S: 71 of 71 passed

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CHIP-8</title>
+<style>
+  /* After the VIP in its case, the VP-711, "with a nice blue plastic
+     shell" (oldcomputers.net), its sixteen keys a membrane pad, and its
+     picture white on black on a television: colour needed an extra
+     board. The shade of blue is a guess; no source gives it. */
+  :root {
+    --bg: #eef1f5; --panel: #ffffff; --ink: #1b1f26; --muted: #5d6673;
+    --line: #d5dbe3; --accent: #1f4f8f; --case: #1f4f8f; --case-ink: #ffffff;
+    --pad: #e9e6dc; --pad-ink: #1b1f26; --pad-edge: #b9b4a5;
+    --screen: #050505; --pixel: #f2f2ee; --hi: #fff3c4; --bad: #a33a2a;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10141a; --panel: #181d25; --ink: #e6e9ee; --muted: #98a2b0;
+      --line: #2b3340; --accent: #7fa8de; --case: #1b3f70; --case-ink: #ffffff;
+      --pad: #d9d5c8; --pad-ink: #1b1f26; --pad-edge: #9d988a;
+      --screen: #000000; --pixel: #f2f2ee; --hi: #3a3420; --bad: #e08070;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header { background: var(--case); color: var(--case-ink); }
+  header div { padding: 14px 16px; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0; letter-spacing: .04em; }
+  header p { margin: 2px 0 0; opacity: .85; }
+  header code { color: var(--case-ink); }
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+         gap: 16px; padding: 14px 16px 24px; max-width: 1200px; margin: 0 auto; }
+  @media (max-width: 860px) { main { grid-template-columns: minmax(0, 1fr); } }
+  section { background: var(--panel); border: 1px solid var(--line);
+            border-radius: 8px; padding: 12px; min-width: 0; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em;
+       color: var(--muted); margin: 0 0 8px; }
+  .col { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  select, input, button, textarea {
+    font: inherit; color: var(--ink); background: var(--panel);
+    border: 1px solid var(--line); border-radius: 6px; }
+  select, input { padding: 4px 6px; }
+  button { padding: 5px 12px; cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); color: var(--panel); border-color: var(--accent); }
+  textarea { width: 100%; min-height: 330px; padding: 8px; resize: vertical;
+             font: 13px/1.45 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+             white-space: pre; overflow: auto; tab-size: 8; }
+  .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+  /* A television's picture: white on black, in a dark bezel. */
+  canvas { display: block; width: 100%; image-rendering: pixelated;
+           background: var(--screen); border-radius: 10px; aspect-ratio: 2 / 1;
+           border: 10px solid #26292e; }
+  #status { margin-top: 8px; min-height: 1.45em; }
+  #status.bad { color: var(--bad); }
+  /* The keypad as a membrane pad set into the blue case. */
+  .keypad { display: grid; grid-template-columns: repeat(4, 52px); gap: 6px;
+            background: var(--case); padding: 10px; border-radius: 6px; }
+  .keypad button { height: 44px; padding: 0; font-weight: 600; background: var(--pad);
+                   color: var(--pad-ink); border: 1px solid var(--pad-edge); border-radius: 3px;
+                   box-shadow: inset 0 -2px 0 var(--pad-edge); }
+  .keypad button:hover { border-color: var(--case-ink); }
+  .keypad button.down { box-shadow: inset 0 2px 3px rgba(0,0,0,.35); transform: translateY(1px); }
+  .keypad small { display: block; font-weight: 400; font-size: 10px; color: #6b675c; }
+  .regs { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 4px 8px; }
+  .regs div { white-space: nowrap; }
+  .regs span { color: var(--muted); }
+  .regs .changed b { background: var(--hi); }
+  table { border-collapse: collapse; width: 100%; }
+  td { padding: 1px 8px 1px 0; white-space: nowrap; vertical-align: top; }
+  td.src { color: var(--muted); white-space: pre; overflow: hidden; text-overflow: ellipsis; max-width: 0; width: 100%; }
+  tr.here td { background: var(--hi); }
+  .warn { display: inline-block; width: 1em; margin-left: -1em; color: var(--bad); font-weight: 700; }
+  #listing td:first-child { padding-left: 1em; }
+  .help { color: var(--muted); font-size: 13px; margin: 8px 0 0; }
+  label { color: var(--muted); }
+  details summary { cursor: pointer; color: var(--muted); }
+</style>
+</head>
+<body>
+<header><div>
+  <h1>CHIP-8</h1>
+  <p>The COSMAC VIP's virtual machine, as appendix C describes it: the same machine as
+     <code>chip8.py</code>, which <code>make check</code> holds it to.</p>
+</div></header>
+<main>
+  <div class="col">
+    <section>
+      <h2>Program</h2>
+      <div class="row">
+        <select id="sample" aria-label="Sample program"></select>
+        <button id="load" class="primary" title="Read the program, and start the machine again">Load</button>
+      </div>
+      <p class="help" id="title"></p>
+      <textarea id="code" spellcheck="false" aria-label="Program, in hexadecimal words"></textarea>
+      <p class="help">One instruction, four hexadecimal digits, to a word; anything after
+        <code>;</code> is a comment. The program is put at 200.</p>
+    </section>
+    <section>
+      <h2>Machine</h2>
+      <div class="row">
+        <button id="run" class="primary">Run</button>
+        <button id="step">Step</button>
+        <button id="reset">Reset</button>
+        <label>as <select id="kind"><option value="vip">the VIP</option>
+          <option value="chip48">CHIP-48</option></select></label>
+        <label>seed <input id="seed" type="number" value="1" min="0" style="width: 72px"></label>
+      </div>
+      <div class="row" style="margin-top: 8px">
+        <label for="speed">speed</label>
+        <input id="speed" type="range" min="1" max="60" value="10" style="flex: 1">
+        <span id="speedText" class="mono"></span>
+      </div>
+      <p class="help">The timers count down once every ten instructions, as in
+        <code>chip8.py</code>: at the speed of 10, sixty times a second.</p>
+    </section>
+  </div>
+  <div class="col">
+    <section>
+      <h2>Screen</h2>
+      <canvas id="screen" width="64" height="32" aria-label="The screen, 64 by 32"></canvas>
+      <div id="status" role="status"></div>
+    </section>
+    <section>
+      <h2>Keys</h2>
+      <div class="row" style="align-items: flex-start; gap: 16px">
+        <div class="keypad" id="keypad"></div>
+        <p class="help" style="flex: 1; min-width: 180px; margin: 0">The VIP's sixteen keys, in its layout.
+          On a keyboard: <span class="mono">1 2 3 4</span>, <span class="mono">Q W E R</span>,
+          <span class="mono">A S D F</span> and <span class="mono">Z X C V</span>.
+          A key held down answers <span class="mono">EX9E</span> and <span class="mono">EXA1</span>;
+          a key pressed is what <span class="mono">FX0A</span> waits for.</p>
+      </div>
+    </section>
+    <section>
+      <h2>Registers</h2>
+      <div class="regs mono" id="regs"></div>
+      <div class="row mono" style="margin-top: 8px; gap: 16px" id="more"></div>
+    </section>
+    <section>
+      <h2>At pc</h2>
+      <table class="mono" id="listing"></table>
+    </section>
+  </div>
+</main>
+<script src="chip8.js"></script>
+<script src="samples.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

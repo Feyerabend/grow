@@ -1,0 +1,35 @@
+
+main <while.lua:0,0> (21 instructions)
+0+ params, 5 slots, 1 upvalue, 5 locals, 2 constants, 0 functions
+	1	[1]	VARARGPREP	0
+	2	[3]	LOADI    	0 0
+	3	[4]	LOADK    	1 0	; 1000000
+	4	[4]	LT       	0 1 0
+	5	[4]	JMP      	3	; to 9
+	6	[5]	ADDI     	0 0 1
+	7	[5]	MMBINI   	0 1 6 0	; __add
+	8	[5]	JMP      	-6	; to 3
+	9	[7]	LOADI    	1 0
+	10	[8]	LOADI    	2 1
+	11	[8]	LOADK    	3 0	; 1000000
+	12	[8]	LOADI    	4 1
+	13	[8]	FORPREP  	2 2	; exit to 17
+	14	[9]	ADDI     	1 1 1
+	15	[9]	MMBINI   	1 1 6 0	; __add
+	16	[8]	FORLOOP  	2 3	; to 14
+	17	[11]	GETTABUP 	2 0 1	; _ENV "print"
+	18	[11]	MOVE     	3 0
+	19	[11]	MOVE     	4 1
+	20	[11]	CALL     	2 3 1	; 2 in 0 out
+	21	[11]	RETURN   	2 1 1	; 0 out
+constants (2):
+	0	I	1000000
+	1	S	"print"
+locals (5):
+	0	i	3	22
+	1	n	10	22
+	2	(for state)	13	17
+	3	(for state)	13	17
+	4	j	14	16
+upvalues (1):
+	0	_ENV	1	0

@@ -1,0 +1,10 @@
+printed: 0 1 1 2 3 5 8 13 21 34
+instructions: 130
+   juggling    31
+   locals      31
+   calls        2
+   jumps       21
+   work        44
+   stopping     1
+most frames: 1
+deepest stack: 5

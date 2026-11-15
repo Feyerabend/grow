@@ -1,0 +1,12 @@
+vm-kinds: 71 of 71 passed
+vm-kinds -g copy -S: 71 of 71 passed
+vm-room: 71 of 71 passed
+vm-room -g copy -S: 71 of 71 passed
+fib          kinds: 4 of 4 arithmetic instructions given two numbers
+loop         kinds: 3 of 3 arithmetic instructions given two numbers
+sieve        kinds: 8 of 8 arithmetic instructions given two numbers
+enkel-sieve  kinds: 0 of 14 arithmetic instructions given two numbers
+basal-loop   kinds: 3 of 8 arithmetic instructions given two numbers
+fuzz, kinds:         1800 programs, 1262 verified, 0 differ
+fuzz, room:          1800 programs, 1262 verified, 0 differ
+fuzz, kinds, broken: 1800 programs, 1262 verified, 55 differ

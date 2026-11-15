@@ -1,0 +1,2 @@
+error: affine variable 'io' captured by a lambda — a closure may be called many times, which would duplicate the resource; pass it as a parameter instead
+status 1

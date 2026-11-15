@@ -1,0 +1,24 @@
+loop:
+as vm2c.py writes it: 19 "start =" in the C
+  run(): 162 instructions, 4 of them stores to start
+  its innermost loop: 22 instructions, 0 of them stores to start
+start only where it can trap: 14 "start =" in the C
+  run(): 160 instructions, 3 of them stores to start
+  its innermost loop: 22 instructions, 0 of them stores to start
+the two loops are the same but for which registers they use
+fib:
+as vm2c.py writes it: 21 "start =" in the C
+  run(): 468 instructions, 11 of them stores to start
+  its innermost loop: 287 instructions, 11 of them stores to start
+start only where it can trap: 19 "start =" in the C
+  run(): 459 instructions, 10 of them stores to start
+  its innermost loop: 278 instructions, 10 of them stores to start
+the two loops are different
+sieve:
+as vm2c.py writes it: 60 "start =" in the C
+  run(): 1134 instructions, 60 of them stores to start
+  its innermost loop: 771 instructions, 50 of them stores to start
+start only where it can trap: 45 "start =" in the C
+  run(): 1127 instructions, 59 of them stores to start
+  its innermost loop: 766 instructions, 50 of them stores to start
+the two loops are different

@@ -1,0 +1,8 @@
+33
+50
+100
+Exception in thread "main" java.lang.ArithmeticException: / by zero
+	at Share.share(share.p:7)
+	at Share.round(share.p:12)
+	at Share.main(share.p:20)
+status 1

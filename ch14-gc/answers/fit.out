@@ -1,0 +1,27 @@
+-g mark
+4000
+gc: mark and sweep, heap of 65536 places
+gc: 16679 blocks made, 81535 places in all
+gc: 2 collections, most live after one: 46518 places
+gc: 39020 places freed
+gc: 25358343 free chunks looked at
+-g next
+4000
+gc: mark and sweep, next fit, heap of 65536 places
+gc: 16679 blocks made, 81535 places in all
+gc: 2 collections, most live after one: 46518 places
+gc: 39020 places freed
+gc: 29354 free chunks looked at
+-g copy
+4000
+gc: copying, heap of 65536 places
+gc: 16679 blocks made, 81535 places in all
+gc: 1 collections, most live after one: 26519 places
+gc: 26519 places copied
+-g compact
+4000
+gc: mark and compact, heap of 65536 places
+gc: 16679 blocks made, 81535 places in all
+gc: 1 collections, most live after one: 46518 places
+gc: 46518 places moved
+gc: 16680 free chunks looked at

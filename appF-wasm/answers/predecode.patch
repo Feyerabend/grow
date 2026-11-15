@@ -1,0 +1,264 @@
+--- wasm.h
++++ wasm.h, decoded once
+@@ -77,7 +77,16 @@
+     int32_t *ends, *elses;
+     uint32_t max_labels;            /* the deepest the blocks nest */
+     uint32_t max_stack;             /* the most operands at once */
++    /* Made by translate, after validation: the body decoded, one Instr
++     * to an instruction, with its immediates read and its jumps' ends
++     * found. A block's or an if's a is where a branch to it goes on, as
++     * an index here; an if's b is its arity, and, above bit 32, where
++     * its else part begins. */
++    struct Instr { uint8_t op; uint32_t a; uint64_t b; } *instrs;
++    uint32_t ninstrs;
++    uint32_t *targets;              /* br_table's depths, n + 1 each */
+ } Code;
++typedef struct Instr Instr;
+ 
+ /* A module as decoded: everything points into the bytes it came from. */
+ typedef struct {
+--- wasm.c
++++ wasm.c, decoded once
+@@ -618,7 +618,74 @@
+     uint8_t bt = byte(r);
+     return bt == 0x40 ? 0 : bt;
+ }
++
++static uint32_t imm_u32(const uint8_t *b, uint32_t *pc);
++static int64_t imm_s64(const uint8_t *b, uint32_t *pc);
+ 
++/* Translate a validated body into Instrs, once: each instruction's
++ * immediates read, and each block's end and each if's else found, as
++ * indices of Instrs. The bytes were checked by decoding and validation. */
++enum { NO_ELSE = 0xFFFFFFFFu };
++
++static void translate(Code *code)
++{
++    const uint8_t *body = code->body;
++    uint32_t len = (uint32_t)code->len, n = 0, ntargets = 0;
++    uint32_t *at = grow(NULL, len + 1, sizeof(uint32_t));     /* byte -> Instr */
++    Instr *ins = grow(NULL, len + 1, sizeof(Instr));
++    uint32_t *targets = NULL;
++    for (uint32_t pc = 0; pc < len; n++) {
++        uint32_t start = pc;
++        Instr in = {body[pc++], 0, 0};
++        at[start] = n;
++        switch (in.op) {
++        case 0x02: case 0x03: case 0x04:
++            in.a = start;               /* for now: found below */
++            in.b = body[pc++] != 0x40;
++            break;
++        case 0x0C: case 0x0D: case 0x10:
++        case 0x20: case 0x21: case 0x22: case 0x23: case 0x24:
++            in.a = imm_u32(body, &pc);
++            break;
++        case 0x0E:
++            in.a = imm_u32(body, &pc);
++            in.b = ntargets;
++            targets = grow(targets, ntargets + in.a + 1, sizeof(uint32_t));
++            for (uint32_t k = 0; k <= in.a; k++)
++                targets[ntargets++] = imm_u32(body, &pc);
++            break;
++        case 0x11: in.a = imm_u32(body, &pc); pc++; break;
++        case 0x3F: case 0x40: pc++; break;
++        case 0x41: in.b = (uint32_t)imm_s64(body, &pc); break;
++        case 0x42: in.b = (uint64_t)imm_s64(body, &pc); break;
++        case 0x43: { uint32_t u; memcpy(&u, body + pc, 4); pc += 4; in.b = u; break; }
++        case 0x44: memcpy(&in.b, body + pc, 8); pc += 8; break;
++        default:
++            if (in.op >= 0x28 && in.op <= 0x3E) {
++                imm_u32(body, &pc);     /* the alignment: only a hint */
++                in.a = imm_u32(body, &pc);
++            }
++        }
++        ins[n] = in;
++    }
++    at[len] = n;
++    for (uint32_t k = 0; k < n; k++) {
++        uint32_t start = ins[k].a;
++        if (ins[k].op == 0x03)
++            ins[k].a = k;
++        else if (ins[k].op == 0x02 || ins[k].op == 0x04) {
++            ins[k].a = at[code->ends[start]] + 1;
++            if (ins[k].op == 0x04)
++                ins[k].b |= (uint64_t)(code->elses[start] >= 0 ?
++                                       at[code->elses[start]] + 1 : NO_ELSE) << 32;
++        }
++    }
++    free(at);
++    code->instrs = ins;
++    code->ninstrs = n;
++    code->targets = targets;
++}
++
+ static void validate_code(Context *c, Code *code, FuncType *type)
+ {
+     c->nlocals = type->nparams + code->nlocals;
+@@ -944,8 +1011,10 @@
+             if (same_name(m->exports[j].name, e->name.s, e->name.len))
+                 fail("duplicate export name");
+     }
+-    for (uint32_t i = 0; i < m->ncodes; i++)
++    for (uint32_t i = 0; i < m->ncodes; i++) {
+         validate_code(&c, &m->codes[i], &m->types[m->funcs[i]]);
++        translate(&m->codes[i]);
++    }
+     free(c.funcs); free(c.gtypes); free(c.gmuts);
+     free(c.opds); free(c.ctrls); free(c.locals);
+     return NULL;
+@@ -1371,7 +1440,7 @@
+     FuncInst *f = NULL;
+     Code *code = NULL;
+     ModuleInst *mi = NULL;
+-    const uint8_t *body = NULL;
++    const Instr *body = NULL;
+     uint32_t pc = 0, locals = 0, lbase = 0;
+     uint32_t callee = funcaddr;
+ 
+@@ -1401,42 +1470,36 @@
+         f = g;
+         code = c;
+         mi = g->module;
+-        body = c->body;
++        body = c->instrs;
+         locals = sp - g->type.nparams;
+         frames[nframes++] = (Frame){g, 0, locals, ltop};
+         memset(values + sp, 0, sizeof(Value) * c->nlocals);
+         sp += c->nlocals;
+         lbase = ltop;
+-        labels[ltop++] = (Label){(uint32_t)c->len, sp, g->type.nresults};
++        labels[ltop++] = (Label){c->ninstrs, sp, g->type.nresults};
+         pc = 0;
+     }
+ 
+ next:
+     for (;;) {
+-        uint8_t op = body[pc++];
++        const Instr *in = &body[pc++];
++        uint8_t op = in->op;
+         wasm_steps++;
+         switch (op) {
+         case 0x00: trap("unreachable");
+         case 0x01: break;
+-        case 0x02: case 0x03: {     /* block; loop, whose label goes back */
+-            uint32_t start = pc - 1;
+-            uint8_t bt = body[pc++];
+-            if (op == 0x02)
+-                labels[ltop++] = (Label){(uint32_t)code->ends[start] + 1, sp, bt != 0x40};
+-            else
+-                labels[ltop++] = (Label){start, sp, 0};
++        case 0x02: case 0x03:       /* block; loop, whose label goes back */
++            labels[ltop++] = (Label){in->a, sp, (uint32_t)in->b};
+             break;
+-        }
+         case 0x04: {                /* if */
+-            uint32_t start = pc - 1;
+-            uint8_t bt = body[pc++];
+             uint32_t c = (uint32_t)values[--sp];
+-            Label l = {(uint32_t)code->ends[start] + 1, sp, bt != 0x40};
++            uint32_t els = (uint32_t)(in->b >> 32);
++            Label l = {in->a, sp, (uint32_t)in->b & 1};
+             if (c)
+                 labels[ltop++] = l;
+-            else if (code->elses[start] >= 0) {
++            else if (els != NO_ELSE) {
+                 labels[ltop++] = l;
+-                pc = (uint32_t)code->elses[start] + 1;
++                pc = els;
+             } else
+                 pc = l.cont;
+             break;
+@@ -1449,31 +1512,27 @@
+                 goto ret;
+             break;
+         case 0x0C:
+-            depth = imm_u32(body, &pc);
++            depth = in->a;
+             goto branch;
+         case 0x0D:
+-            depth = imm_u32(body, &pc);
++            depth = in->a;
+             if ((uint32_t)values[--sp])
+                 goto branch;
+             break;
+         case 0x0E: {
+-            uint32_t n = imm_u32(body, &pc);
++            uint32_t n = in->a;
+             uint32_t i = (uint32_t)values[--sp];
+-            uint32_t k = i < n ? i : n;
+-            for (uint32_t j = 0; j < k; j++)
+-                imm_u32(body, &pc);
+-            depth = imm_u32(body, &pc);
++            depth = code->targets[in->b + (i < n ? i : n)];
+             goto branch;
+         }
+         case 0x0F:                  /* return: a branch to the function's label */
+             depth = ltop - 1 - lbase;
+             goto branch;
+         case 0x10:
+-            callee = mi->funcs[imm_u32(body, &pc)];
++            callee = mi->funcs[in->a];
+             goto call;
+         case 0x11: {
+-            uint32_t x = imm_u32(body, &pc);
+-            pc++;                   /* the reserved byte */
++            uint32_t x = in->a;
+             uint32_t i = (uint32_t)values[--sp];
+             TableInst *t = store->tables[mi->table];
+             if (i >= t->size)
+@@ -1493,17 +1552,15 @@
+                 values[sp - 1] = values[sp];
+             break;
+         }
+-        case 0x20: values[sp++] = values[locals + imm_u32(body, &pc)]; break;
+-        case 0x21: values[locals + imm_u32(body, &pc)] = values[--sp]; break;
+-        case 0x22: values[locals + imm_u32(body, &pc)] = values[sp - 1]; break;
+-        case 0x23: values[sp++] = store->globals[mi->globals[imm_u32(body, &pc)]].value; break;
+-        case 0x24: store->globals[mi->globals[imm_u32(body, &pc)]].value = values[--sp]; break;
++        case 0x20: values[sp++] = values[locals + in->a]; break;
++        case 0x21: values[locals + in->a] = values[--sp]; break;
++        case 0x22: values[locals + in->a] = values[sp - 1]; break;
++        case 0x23: values[sp++] = store->globals[mi->globals[in->a]].value; break;
++        case 0x24: store->globals[mi->globals[in->a]].value = values[--sp]; break;
+         case 0x3F:                  /* memory.size */
+-            pc++;
+             values[sp++] = memory(mi)->pages;
+             break;
+         case 0x40: {                /* memory.grow: the old size, or -1 */
+-            pc++;
+             MemInst *m = memory(mi);
+             uint32_t n = (uint32_t)values[sp - 1];
+             uint64_t len = (uint64_t)m->pages + n;
+@@ -1518,20 +1575,12 @@
+             }
+             break;
+         }
+-        case 0x41: values[sp++] = (uint32_t)imm_s64(body, &pc); break;
+-        case 0x42: values[sp++] = (uint64_t)imm_s64(body, &pc); break;
+-        case 0x43: {
+-            uint32_t u;
+-            memcpy(&u, body + pc, 4);
+-            pc += 4;
+-            values[sp++] = u;
++        case 0x41: case 0x42: case 0x43: case 0x44:
++            values[sp++] = in->b;
+             break;
+-        }
+-        case 0x44: memcpy(&values[sp++], body + pc, 8); pc += 8; break;
+         default:
+             if (op >= 0x28 && op <= 0x3E) {
+-                imm_u32(body, &pc);             /* the alignment: only a hint */
+-                uint32_t offset = imm_u32(body, &pc);
++                uint32_t offset = in->a;
+                 uint8_t t;
+                 uint32_t width;
+                 memory_op(op, &t, &width);
+@@ -1581,7 +1630,7 @@
+         f = fr->func;
+         code = f->code;
+         mi = f->module;
+-        body = code->body;
++        body = code->instrs;
+         pc = fr->pc;
+         locals = fr->locals;
+         lbase = fr->labels;

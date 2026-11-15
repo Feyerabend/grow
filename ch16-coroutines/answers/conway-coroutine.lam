@@ -1,0 +1,24 @@
+# Exercise 16.6, as a coroutine: the same copying, a**b***c*, -1 at the end.
+# The coroutine is sent one character at a time, and keeps where it has got
+# to in the copying as where it is in its own code: in the middle of a pair,
+# or not.
+let input i =
+  if i = 0 then 97 else if i = 1 then 42 else if i = 2 then 42 else
+  if i = 3 then 98 else if i = 4 then 42 else if i = 5 then 42 else
+  if i = 6 then 42 else if i = 7 then 99 else if i = 8 then 42 else -1 in
+
+let rec copy c =
+  if c = -1 then 0
+  else if c = 42 then
+    (let d = yield 0 in
+     if d = 42 then (print 94; copy (yield 0))
+     else if d = -1 then (print 42; 0)
+     else (print 42; print d; copy (yield 0)))
+  else (print c; copy (yield 0)) in
+
+let conway = coroutine copy in
+
+let rec feed i =
+  if i = 10 then 0 else (resume conway (input i); feed (i + 1)) in
+
+feed 0

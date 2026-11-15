@@ -1,0 +1,10 @@
+          vm.wasm
+-O0         12063 bytes
+-O2         11446 bytes
+-Os         10543 bytes
+loop        18373 bytes
+state       11931 bytes
+
+-O2    C 71 of 71 passed, 71 of 71 passed; Node.js 71 of 71 passed, 71 of 71 passed
+loop   C 71 of 71 passed, 71 of 71 passed; Node.js 71 of 71 passed, 71 of 71 passed; stepping 71 of 71 passed, 71 of 71 passed
+state  C 71 of 71 passed, 71 of 71 passed; Node.js 71 of 71 passed, 71 of 71 passed

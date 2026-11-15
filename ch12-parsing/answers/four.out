@@ -1,0 +1,9 @@
+compare.expr: the same trees from all four: True
+fuzz.py's 5000 expressions: the same trees from all four: True
+
+78052 tokens
+  descent         639209 calls,   8.2 a token, nests to 123
+  pratt           489184 calls,   6.3 a token, nests to 495
+  combinators    1713539 calls,  22.0 a token, nests to 89
+  shunting        323098 calls,   4.1 a token, nests to 2000 and more
+  shunting parses 100000 parentheses deep

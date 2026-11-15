@@ -1,0 +1,26 @@
+pairs, of every pair run over 22 programs (* cannot be fused)
+   LOAD PUSH               12.0%
+   LOAD LOAD                6.1%
+  *JZ LOAD                  6.0%
+   PUSH SUB                 5.5%
+  *JMP LOAD                 5.4%
+   ADD STORE                5.3%
+   STORE JMP                5.3%
+   STORE LOAD               4.9%
+   SUB STORE                4.9%
+   LOAD JZ                  4.9%
+   PUSH AND                 4.9%
+   AND ADD                  4.9%
+triples, of every triple run over 22 programs (* cannot be fused)
+   LOAD PUSH SUB            5.5%
+  *JZ LOAD LOAD             5.3%
+  *STORE JMP LOAD           5.3%
+   LOAD LOAD PUSH           5.2%
+   ADD STORE LOAD           4.9%
+   STORE LOAD PUSH          4.9%
+   PUSH SUB STORE           4.9%
+  *JMP LOAD JZ              4.9%
+  *LOAD JZ LOAD             4.9%
+   LOAD PUSH AND            4.9%
+   SUB STORE JMP            4.9%
+   PUSH AND ADD             4.9%

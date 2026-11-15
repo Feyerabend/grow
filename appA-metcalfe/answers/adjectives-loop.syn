@@ -1,0 +1,24 @@
+; Exercise 3: the list with the integral sign, "an adjective, followed by
+; any number of adjectives", as a loop. The loop ends with the flag false,
+; at the first word that is not an adjective; FLAG sets it again.
+;
+;   <list> ::= <adj> J{ <adj> }
+
+        CALL    PHRASE
+        STOP
+PHRASE  CALL    LIST
+        FALSE   P9
+        CALL    NOUN
+P9      RETURN
+LIST    CALL    ADJ
+        FALSE   L9
+L1      CALL    ADJ
+        TRUE    L1
+        FLAG
+L9      RETURN
+ADJ     MATCH   BIG
+        TRUE    A9
+        MATCH   BAD
+A9      RETURN
+NOUN    MATCH   BEAR
+        RETURN

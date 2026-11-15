@@ -1,0 +1,27 @@
+--- enkelj.py	2026-11-15 00:17:38
++++ enkelj.py	2026-11-15 00:17:38
+@@ -259,14 +259,18 @@
+                 c.field(PUTSTATIC, "rval", "I")
+             c.op(RETURN)
+             c.after_jump = True
+-        elif kind in (Print, Emit):
++        elif kind is Print:
+             c.u2(GETSTATIC, self.pool.field(*OUT), 1)
+             self.value(node.value)
+-            if kind is Print:
+-                c.u2(INVOKEVIRTUAL, self.pool.method("java/io/PrintStream", "println", "(I)V"), -2)
+-            else:
+-                c.op(0x92)                  # i2c
+-                c.u2(INVOKEVIRTUAL, self.pool.method("java/io/PrintStream", "print", "(C)V"), -2)
++            c.u2(INVOKEVIRTUAL, self.pool.method("java/io/PrintStream", "println", "(I)V"), -2)
++        elif kind is Emit:
++            # A byte, as chapter 10's machine writes it, not a char in
++            # UTF-8; and flushed, since write does not flush by itself.
++            c.u2(GETSTATIC, self.pool.field(*OUT), 1)
++            c.op(0x59, stack=1)             # dup
++            self.value(node.value)
++            c.u2(INVOKEVIRTUAL, self.pool.method("java/io/PrintStream", "write", "(I)V"), -2)
++            c.u2(INVOKEVIRTUAL, self.pool.method("java/io/PrintStream", "flush", "()V"), -1)
+ 
+     def branch_unless(self, condition, label):
+         if type(condition) is Compare:

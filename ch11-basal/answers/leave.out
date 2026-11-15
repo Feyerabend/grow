@@ -1,0 +1,3 @@
+leave.bas:7:6: GOTO out leaves the subroutine twice, lines 5 to 8
+    GOTO out
+         ^

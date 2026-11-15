@@ -1,0 +1,2 @@
+THE BOY SEES A TREE  =>  flag true
+THE BOY A TREE SEES  =>  flag false, stopped at symbol 1 of 5

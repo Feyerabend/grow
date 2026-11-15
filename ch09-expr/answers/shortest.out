@@ -1,0 +1,11 @@
+1 tokens: none
+2 tokens: none
+3 tokens: none
+4 tokens: none
+5 tokens: none
+the shortest, 6 tokens, 106 of them; the first five:
+1/-1*2: right -2, mistaken 0
+1/-1*3: right -3, mistaken 0
+1/-1/2: right 0, mistaken trap
+1/-1/3: right 0, mistaken trap
+1/-1%1: right 0, mistaken trap

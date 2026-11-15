@@ -1,0 +1,8 @@
+; Exercise D.3: CPR in place of SUB, and BC after it.
+
+        SET R5, 3
+        LD R5           ; R0 := 3
+        CPR R5          ; R13 := R0 - R5, and the carry; R0 stays 3
+        BC taken        ; the carry: R0 >= R5
+        RTN
+taken:  RTN

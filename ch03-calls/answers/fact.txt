@@ -1,0 +1,5 @@
+; exercise 4: chapter 3's recursive factorial, of N
+        PUSH N  CALL fact 1  PRINT  HALT
+fact:   LOAD 0  PUSH 2  LT  JZ recurse
+        PUSH 1  RET
+recurse: LOAD 0  LOAD 0  PUSH 1  SUB  CALL fact 1  MUL  RET

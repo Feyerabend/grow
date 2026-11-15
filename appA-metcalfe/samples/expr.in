@@ -1,0 +1,6 @@
+B = (A+1)/2
+T = B
+B = B + (A/B - B)/2
+IF B-T=+,GOTO S1
+X = A*B + C*D
+X = A +

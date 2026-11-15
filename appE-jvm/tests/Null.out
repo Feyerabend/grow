@@ -1,0 +1,4 @@
+before
+Exception in thread "main" java.lang.NullPointerException
+	at Null.main(Null.java:10)
+status 1

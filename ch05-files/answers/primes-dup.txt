@@ -1,0 +1,27 @@
+# Exercise 5.3: primes.txt with one instruction, DUP, put in at 2. It leaves
+# a spare copy of n under the loop, which nothing reads. Every address from
+# 2 on moves by one: the seven marked numbers had to change.
+
+PUSH 2              #  0  n = 2
+DUP                 #  2  the new instruction
+LOAD 0 PUSH 50 LT   #  3  loop: n < 50 ?
+JZ 29               #  8  was 28
+LOAD 0 CALL 30 1    # 10  was 29
+JZ 20               # 15  was 19
+LOAD 0 PRINT        # 17
+LOAD 0 PUSH 1 ADD   # 20
+STORE 0             # 25
+JMP 3               # 27  was 2
+HALT                # 29  end
+
+PUSH 2              # 30  prime: d = 2
+LOAD 1 LOAD 1 MUL   # 32  test: d * d
+LOAD 0 SWAP LT      # 37
+JZ 46               # 41  was 45
+PUSH 1 RET          # 43
+LOAD 0 LOAD 1 MOD   # 46
+JZ 62               # 51  was 61
+LOAD 1 PUSH 1 ADD   # 53
+STORE 1             # 58
+JMP 32              # 60  was 31
+PUSH 0 RET          # 62

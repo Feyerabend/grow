@@ -1,0 +1,12 @@
+(* Benchmark: a tail-recursive loop of ten million rounds. The
+   continuation does not grow; every round makes an environment cell or
+   two that nothing uses again. *)
+
+module Loop
+
+fn sum_to(n : Int, acc : Int) : Int =
+  if n == 0 then acc
+  else sum_to(n - 1, acc + n)
+
+fn main(io : IO) : IO =
+  print(io, show(sum_to(10000000, 0)))

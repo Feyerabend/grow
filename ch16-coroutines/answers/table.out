@@ -1,0 +1,14 @@
+as it is
+                   places/trip  collections
+  a plain call               0            0
+  depth 0                    6           91
+  depth 5                   21          320
+  depth 20                  66         1008
+  depth 60                 186         2840
+keeping the block
+                   places/trip  collections
+  a plain call               0            0
+  depth 0                    0            0
+  depth 5                    0            0
+  depth 20                   0            0
+  depth 60                   0            0

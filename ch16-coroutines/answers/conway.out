@@ -1,0 +1,26 @@
+conway-function
+97
+94
+98
+94
+42
+99
+42
+gc: mark and sweep, heap of 65536 places
+gc: 24 blocks made, 129 places in all
+gc: 0 collections, most live after one: 0 places
+gc: 0 places freed
+co: 0 switches, 0 values saved
+conway-coroutine
+97
+94
+98
+94
+42
+99
+42
+gc: mark and sweep, heap of 65536 places
+gc: 14 blocks made, 187 places in all
+gc: 0 collections, most live after one: 0 places
+gc: 0 places freed
+co: 11 switches, 83 values saved

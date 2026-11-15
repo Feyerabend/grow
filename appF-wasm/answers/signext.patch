@@ -1,0 +1,66 @@
+--- wasm.c
++++ wasm.c, with sign extension
+@@ -187,9 +187,12 @@
+ /* 5.4 Instructions: read only for their form here. Validation reads them
+  * again for their types. */
+ 
+-/* Instructions with no immediates, past the control ones: 0x45 to 0xBF,
++/* Instructions with no immediates, past the control ones: 0x45 to 0xC4,
+  * and drop, select. */
+-static int plain(uint8_t op) { return (op >= 0x45 && op <= 0xBF) || op == 0x1A || op == 0x1B; }
++static int plain(uint8_t op)
++{
++    return (op >= 0x45 && op <= 0xC4) || op == 0x1A || op == 0x1B;
++}
+ 
+ /* Read one expression, to its final end, checking every instruction is
+  * one of 1.0's and its immediates well formed. */
+@@ -571,7 +574,7 @@
+     return c->ctrls[c->nctrls - 1 - n].label;
+ }
+ 
+-/* The types of the numeric instructions, 0x45 to 0xBF: the operands'
++/* The types of the numeric instructions, 0x45 to 0xC4: the operands'
+  * type, how many, and the result's. */
+ typedef struct { uint8_t in, n, out; } Sig;
+ 
+@@ -591,6 +594,8 @@
+     if (op <= 0x98) return (Sig){F32, 2, F32};
+     if (op <= 0x9F) return (Sig){F64, 1, F64};
+     if (op <= 0xA6) return (Sig){F64, 2, F64};
++    if (op >= 0xC0)             /* sign extension: i32 to i32, i64 to i64 */
++        return op <= 0xC1 ? (Sig){I32, 1, I32} : (Sig){I64, 1, I64};
+     static const uint8_t conv[][2] = {          /* 0xA7 to 0xBF: from, to */
+         {I64, I32}, {F32, I32}, {F32, I32}, {F64, I32}, {F64, I32},
+         {I32, I64}, {I32, I64}, {F32, I64}, {F32, I64}, {F64, I64}, {F64, I64},
+@@ -639,7 +644,7 @@
+     while (c->nctrls > 0) {
+         uint32_t at = (uint32_t)(r.p - code->body);
+         uint8_t op = byte(&r);
+-        if (op >= 0x45 && op <= 0xBF) {
++        if (op >= 0x45 && op <= 0xC4) {
+             Sig s = numeric(op);
+             for (int i = 0; i < s.n; i++)
+                 pop_opd(c, s.in);
+@@ -1164,7 +1169,7 @@
+ }
+ 
+ 
+-/* The numeric instructions, 0x45 to 0xBF (4.4.1, 4.3). Each works on
++/* The numeric instructions, 0x45 to 0xC4 (4.4.1, 4.3). Each works on
+  * the top of the value stack, and gives back the stack's new height. An
+  * i32 or an f32 is kept in the low 32 bits, the rest 0. */
+ 
+@@ -1357,6 +1362,12 @@
+     case 0xB9: return UN64(f64_bits((double)(int64_t)B64));
+     case 0xBA: return UN64(f64_bits((double)B64));
+     case 0xBB: return UN64(f64_bits((double)bits_f32(B32)));
++    /* sign extension: the low 8, 16 or 32 bits, as a signed number */
++    case 0xC0: return UN32((int32_t)(int8_t)B32);
++    case 0xC1: return UN32((int32_t)(int16_t)B32);
++    case 0xC2: return UN64((int64_t)(int8_t)B64);
++    case 0xC3: return UN64((int64_t)(int16_t)B64);
++    case 0xC4: return UN64((int64_t)(int32_t)B64);
+     default:   /* 0xBC to 0xBF: the reinterpretations change no bits */
+         return sp;
+     }

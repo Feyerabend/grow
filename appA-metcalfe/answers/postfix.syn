@@ -1,0 +1,63 @@
+; Exercise 4: an expression of letters, + - * / and brackets, written by
+; the editor with its operators after their operands: A+B*C as ABC*+.
+; Each operator is copied as it is read; after its right operand come
+; the edit codes X, to put the operator behind that operand, and C C, to
+; join it all to the left operand. So the codes go after the call of
+; the right operand's rule, in the loop of the rule the operator is in.
+;
+;   <expr>   ::= <term> J{ + <term> [X C C] | - <term> [X C C] }
+;   <term>   ::= <factor> J{ * <factor> [X C C] | / <factor> [X C C] }
+;   <factor> ::= <letter> | ( <expr> )
+
+        CALL    EXPR
+        EDIT    W
+        STOP
+
+EXPR    CALL    TERM
+        FALSE   E9
+E1      MATCH   +
+        TRUE    E2
+        MATCH   -
+        FALSE   E3
+E2      COPY
+        CALL    TERM
+        FALSE   E9
+        EDIT    X
+        EDIT    C
+        EDIT    C
+        TRUE    E1
+E3      FLAG
+E9      RETURN
+
+TERM    CALL    FACTOR
+        FALSE   T9
+T1      MATCH   *
+        TRUE    T2
+        MATCH   /
+        FALSE   T3
+T2      COPY
+        CALL    FACTOR
+        FALSE   T9
+        EDIT    X
+        EDIT    C
+        EDIT    C
+        TRUE    T1
+T3      FLAG
+T9      RETURN
+
+FACTOR  MATCH   (
+        FALSE   F1
+        CALL    EXPR
+        FALSE   F9
+        MATCH   )
+        RETURN
+F1      MATCH   A
+        TRUE    F2
+        MATCH   B
+        TRUE    F2
+        MATCH   C
+        TRUE    F2
+        MATCH   D
+        FALSE   F9
+F2      COPY
+F9      RETURN

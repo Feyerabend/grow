@@ -1,0 +1,5 @@
+# A finished coroutine cannot go on.
+let c = coroutine (fun x -> x + 1) in
+print (resume c 1);
+print (finished c);
+print (resume c 2)

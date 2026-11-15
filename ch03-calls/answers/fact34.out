@@ -1,0 +1,9 @@
+printed: 0
+instructions: 373
+   locals     100
+   calls       68
+   jumps       34
+   work       170
+   stopping     1
+most frames: 34
+deepest stack: 69

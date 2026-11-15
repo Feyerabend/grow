@@ -1,0 +1,5 @@
+3
+Exception in thread "main" java.lang.NegativeArraySizeException: -1
+	at Negative.make(Negative.java:4)
+	at Negative.main(Negative.java:9)
+status 1

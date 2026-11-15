@@ -1,0 +1,23 @@
+2000 random programs, seed 1
+chapter 4 as it is:
+   1310  trap: stack underflow
+    242  trap: no such local
+    146  halted
+    106  trap: not enough arguments
+    106  trap: return without call
+     70  trap: jump out of program
+     10  trap: unknown instruction
+      8  still running after a second
+      2  trap: missing operand
+with a limit of a million steps:
+   1310  trap: stack underflow
+    242  trap: no such local
+    146  halted
+    106  trap: not enough arguments
+    106  trap: return without call
+     70  trap: jump out of program
+     10  trap: unknown instruction
+      8  trap: too many steps
+      2  trap: missing operand
+the programs whose outcome changed:
+      8  still running after a second  ->  trap: too many steps

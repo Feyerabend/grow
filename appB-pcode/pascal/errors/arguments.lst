@@ -1,0 +1,12 @@
+
+     1        9 program arguments(output); 
+     2        9  
+     3        9     procedure p(a, b: integer); 
+     4        7     begin 
+     5        3         writeln(a + b) 
+     6       11     end; 
+     7       14  
+     8       14 begin 
+     9       14     p(1) 
+    10       18 end. 
+    10   ****     ^126

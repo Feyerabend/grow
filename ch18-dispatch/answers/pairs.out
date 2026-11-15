@@ -1,0 +1,17 @@
+loop: 260,000,006 pairs
+  LOAD   PUSH     40,000,000   15.4%
+  JZ     LOAD     20,000,001    7.7%
+  LOAD   JZ       20,000,001    7.7%
+  PUSH   SUB      20,000,000    7.7%
+  PUSH   AND      20,000,000    7.7%
+  ADD    STORE    20,000,000    7.7%
+  SUB    STORE    20,000,000    7.7%
+  JMP    LOAD     20,000,000    7.7%
+  LOAD   LOAD     20,000,000    7.7%
+  STORE  JMP      20,000,000    7.7%
+  STORE  LOAD     20,000,000    7.7%
+  AND    ADD      20,000,000    7.7%
+  PUSH   PUSH              1    0.0%
+  PUSH   LOAD              1    0.0%
+  PRINT  HALT              1    0.0%
+  LOAD   PRINT             1    0.0%

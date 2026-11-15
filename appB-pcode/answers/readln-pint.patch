@@ -1,0 +1,13 @@
+--- pint.p
++++ pint.p, mended
+@@ -563,8 +563,8 @@
+ 				      store[inputadr].vc := input^
+ 				    end;
+ 				 6: errori(' readln on output file   ');
+-				 7: begin readln(input);
+-				      store[inputadr].vc := input^
++				 7: begin readln(prd);
++				      store[prdadr].vc := prd^
+ 				    end;
+ 				 8: errori(' readln on prr file      ')
+ 			    end;

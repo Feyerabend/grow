@@ -1,0 +1,74 @@
+; English to German, with the declension of the article, as in Metcalfe's
+; section V: "der" and "ein" for a subject, "den" and "einen" for an
+; object. The article prints its stem, D or EIN; the subject or the
+; object then adds the ending, ER or EN, by the editor:
+;
+;   X, to put the stem on top, PRINT the ending, C, to join them, X, to
+;   put the noun back on top.
+;
+; A subject with A takes no ending ("ein Knabe"), so the noun phrase
+; must tell its caller which article it found: the article sets mark 1
+; in the noun phrase's entry for THE, and the noun phrase passes it up
+; to the subject or object with MARK 1. The grammar is ours; the words
+; are his, SEHT included.
+
+        CALL    SEN
+        EDIT    W
+        STOP
+SEN     CALL    SUB
+        FALSE   S9
+        CALL    VB
+        FALSE   S9
+        CALL    OBJ
+S9      RETURN
+
+SUB     CALL    NP
+        FALSE   B9
+        TEST    1               ; was the article THE?
+        FALSE   B8
+        EDIT    X               ; DER
+        PRINT   ER
+        EDIT    C
+        EDIT    X
+B8      FLAG
+B9      RETURN
+
+OBJ     CALL    NP
+        FALSE   O9
+        EDIT    X               ; DEN, or EINEN
+        PRINT   EN
+        EDIT    C
+        EDIT    X
+O9      RETURN
+
+NP      CALL    ART
+        FALSE   N9
+        TEST    1
+        FALSE   N1
+        MARK    1               ; tell the caller: it was THE
+N1      CALL    NN
+N9      RETURN
+
+ART     MATCH   THE
+        FALSE   A1
+        PRINT   D
+        MARK    1
+        RETURN
+A1      MATCH   A
+        FALSE   A9
+        PRINT   EIN
+A9      RETURN
+
+NN      MATCH   BOY
+        FALSE   K1
+        PRINT   KNABE
+        RETURN
+K1      MATCH   TREE
+        FALSE   K9
+        PRINT   BAUM
+K9      RETURN
+
+VB      MATCH   SEES
+        FALSE   V9
+        PRINT   SEHT
+V9      RETURN

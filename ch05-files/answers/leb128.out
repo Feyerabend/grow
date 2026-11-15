@@ -1,0 +1,15 @@
+gcd      35 words:  148 bytes, in LEB128   45, 30%
+fib      23 words:  100 bytes, in LEB128   31, 31%
+primes   64 words:  264 bytes, in LEB128   72, 27%
+fact     35 words:  148 bytes, in LEB128   43, 29%
+all four: 660 bytes, in LEB128 191, 29%
+          0: 00
+          1: 01
+         63: 3f
+         64: c0 00
+         -1: 7f
+        -64: 40
+        -65: bf 7f
+       1071: af 08
+ 2147483647: ff ff ff ff 07
+-2147483648: 80 80 80 80 78

@@ -1,0 +1,2 @@
+error: fn total use_loop: calls 'loop', which is not known to terminate (not total, and part of a recursive cycle or not in this module)
+status 1

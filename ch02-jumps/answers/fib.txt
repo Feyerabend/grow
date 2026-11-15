@@ -1,0 +1,10 @@
+; chapter 2's Fibonacci, as it is: a b n, n counted down
+        PUSH 0 PUSH 1 PUSH 10
+loop:   DUP JZ end
+        PUSH 1 SUB
+        ROT ROT
+        OVER PRINT
+        SWAP OVER ADD
+        ROT
+        JMP loop
+end:    HALT

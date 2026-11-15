@@ -1,0 +1,28 @@
+; Exercise 3: a noun phrase is an adjective list and a noun, and an
+; adjective list is one adjective, or an adjective followed by a list,
+; with the short alternative first, as Metcalfe warns against.
+;
+;   <phrase> ::= <list> <noun>
+;   <list>   ::= <adj> | <adj> <list>
+;   <adj>    ::= BIG | BAD          <noun> ::= BEAR
+
+        CALL    PHRASE
+        STOP
+PHRASE  CALL    LIST
+        FALSE   P9
+        CALL    NOUN
+P9      RETURN
+LIST    CALL    ADJ
+        TRUE    L9
+        CALL    MORE
+L9      RETURN
+MORE    CALL    ADJ
+        FALSE   M9
+        CALL    LIST
+M9      RETURN
+ADJ     MATCH   BIG
+        TRUE    A9
+        MATCH   BAD
+A9      RETURN
+NOUN    MATCH   BEAR
+        RETURN

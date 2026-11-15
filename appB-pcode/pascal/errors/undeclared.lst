@@ -1,0 +1,7 @@
+
+     1        9 program undeclared(output); 
+     2        9 var x: integer; 
+     3       10 begin 
+     4        3     x := y + 1 
+     4   ****            ^104
+     5        5 end. 

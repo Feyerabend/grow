@@ -1,0 +1,29 @@
+; Exercise 3: V0 := V1 times V2 by adding V1 to V0, V2 times. The loop is
+; four instructions, with its test at the bottom; a test before it sends
+; V2 = 0 straight to the end. For 6 times 7 the loop runs 7 times, the
+; last time without its jump back: 4 * 6 + 3 = 27 instructions, and 4
+; before them. The product is drawn in decimal, as samples/answer.hex does.
+
+6106    ; 200  V1 := 6
+6207    ; 202  V2 := 7
+6000    ; 204  V0 := 0
+4200    ; 206  skip if V2 is not 0
+1214    ; 208  V2 is 0: to the end
+8014    ; 20A  V0 += V1             loop:
+72FF    ; 20C  V2 -= 1
+3200    ; 20E  skip if V2 = 0
+120A    ; 210  back to the loop
+A300    ; 212  I := 300
+F033    ; 214  the digits of V0 at 300, 301, 302
+F265    ; 216  V0, V1, V2 := the three digits
+6314    ; 218  V3 := 20             x
+640C    ; 21A  V4 := 12             y
+F029    ; 21C  digit V0
+D345    ; 21E
+7305    ; 220
+F129    ; 222  digit V1
+D345    ; 224
+7305    ; 226
+F229    ; 228  digit V2
+D345    ; 22A
+122C    ; 22C  the end

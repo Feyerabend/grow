@@ -1,0 +1,12 @@
+
+     1        9 (* Two of P4's limits, both error 399, an implementation restriction: 
+     2        9    it cannot write a boolean, and a string has at most 16 characters. *) 
+     3        9 program limits(output); 
+     4        9 var b: boolean; 
+     5       10 begin 
+     6        3     b := true; 
+     7        8     writeln(b); 
+     7   ****                ^399
+     8       11     writeln('a string that is longer than sixteen characters') 
+     8   ****                                                               ^399
+     9       16 end. 

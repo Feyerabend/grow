@@ -1,0 +1,8 @@
+vm -g mark: 66 of 66 passed
+vm -g mark -S: 66 of 66 passed
+vm -g next: 66 of 66 passed
+vm -g next -S: 66 of 66 passed
+vm -g copy: 66 of 66 passed
+vm -g copy -S: 66 of 66 passed
+vm -g compact: 66 of 66 passed
+vm -g compact -S: 66 of 66 passed

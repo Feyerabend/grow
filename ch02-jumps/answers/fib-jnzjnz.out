@@ -1,0 +1,9 @@
+printed: 0 1 1 2 3 5 8 13 21 34
+words: 21
+code: PUSH 0 PUSH 1 PUSH 10 PUSH 1 SUB ROT ROT OVER PRINT SWAP OVER ADD ROT DUP JNZ 6 HALT
+work         43
+jumps        10
+juggling     70
+comparing     0
+stopping      1
+all         124

@@ -1,0 +1,8 @@
+; exercise 2: 7 x 6 with ADD and a loop: add 7, six times
+        PUSH 0                  ; sum
+        PUSH 6                  ; n, how many 7s are left
+loop:   DUP JZ end
+        PUSH 1 SUB              ; sum n-1
+        SWAP PUSH 7 ADD SWAP    ; sum+7 n-1
+        JMP loop
+end:    DROP PRINT HALT

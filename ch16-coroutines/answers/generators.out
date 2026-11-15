@@ -1,0 +1,8 @@
+two trees of 16 leaves
+differs at   way          prints  switches  instructions  places
+first        chapter 16        0         4           999     339
+first        generators        0        20          1539     536
+middle       chapter 16        0        20          3857    1865
+middle       generators        0       160          7809    3410
+none         chapter 16        1        36          6062    3133
+none         generators        1       284         12908    5836

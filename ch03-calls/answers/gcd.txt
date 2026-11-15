@@ -1,0 +1,7 @@
+; exercise 2: gcd(a, b) = a if b = 0, else gcd(b, a mod b); needs MOD
+        PUSH 1071  PUSH 462  CALL gcd 2  PRINT
+        PUSH 48  PUSH 18  CALL gcd 2  PRINT
+        HALT
+gcd:    LOAD 1  JZ done
+        LOAD 1  LOAD 0  LOAD 1  MOD  CALL gcd 2  RET
+done:   LOAD 0  RET

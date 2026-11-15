@@ -1,0 +1,4 @@
+{"source_filename": "seventh.wast",
+ "commands": [
+  {"type": "module", "line": 3, "filename": "seventh.0.wasm"}, 
+  {"type": "assert_return", "line": 8, "action": {"type": "invoke", "field": "add", "args": [{"type": "i32", "value": "305419896"}, {"type": "i32", "value": "0"}]}, "expected": [{"type": "i32", "value": "305419896"}]}]}

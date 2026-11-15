@@ -1,0 +1,175 @@
+; A statement of Metcalfe's small programming language, compiled to the
+; code of his stack computer "of the Polish notation class", as in his
+; section VI, cut down to a set statement and an if statement:
+;
+;   <statement> ::= <set> | <if>
+;   <set>       ::= <variable> = <expression> [*STO]
+;   <if>        ::= IF <expression> = <condition> , GOTO <label> X
+;   <condition> ::= 0 [*TZE] | + [*TPL] | - [*TMI]
+;   <expression>::= <term> J{ + <term> [*ADD] | - <term> [*SUB] }
+;   <term>      ::= <factor> J{ * <factor> [*MUL] | / <factor> [*DIV] }
+;   <factor>    ::= <variable> [*CLA] | <number> | ( <expression> )
+;   <variable>  ::= <letter> K J{ { <letter> | <digit> } K C }
+;   <number>    ::= <digit> K J{ <digit> K C }
+;
+; A variable pushes its address; *CLA replaces it with its value. Blanks
+; are left out, so "IF B-T=+,GOTO S1" is first tried as a set statement,
+; with a variable IFB; that fails at the "-", and RETURN winds both tapes
+; back, to try it as an if statement. X puts the label before the test.
+; Letters are A to F, I, O, S, T and X, digits 0 to 2: enough for the
+; samples.
+
+        CALL    STATE
+        EDIT    W
+        STOP
+STATE   CALL    SET
+        TRUE    ST9
+        CALL    IF
+ST9     RETURN
+
+SET     CALL    VAR
+        FALSE   SE9
+        MATCH   =
+        FALSE   SE9
+        CALL    EXPR
+        FALSE   SE9
+        PRINT   *STO
+SE9     RETURN
+
+IF      MATCH   I
+        FALSE   IF9
+        MATCH   F
+        FALSE   IF9
+        CALL    EXPR
+        FALSE   IF9
+        MATCH   =
+        FALSE   IF9
+        CALL    COND
+        FALSE   IF9
+        MATCH   ,
+        FALSE   IF9
+        CALL    GOTO
+        FALSE   IF9
+        CALL    VAR
+        FALSE   IF9
+        EDIT    X
+IF9     RETURN
+GOTO    MATCH   G
+        FALSE   G9
+        MATCH   O
+        FALSE   G9
+        MATCH   T
+        FALSE   G9
+        MATCH   O
+G9      RETURN
+COND    MATCH   0
+        FALSE   C1
+        PRINT   *TZE
+        RETURN
+C1      MATCH   +
+        FALSE   C2
+        PRINT   *TPL
+        RETURN
+C2      MATCH   -
+        FALSE   C9
+        PRINT   *TMI
+C9      RETURN
+
+EXPR    CALL    TERM
+        FALSE   E9
+E1      MATCH   +
+        FALSE   E2
+        CALL    TERM
+        FALSE   E9
+        PRINT   *ADD
+        TRUE    E1
+E2      MATCH   -
+        FALSE   E3
+        CALL    TERM
+        FALSE   E9
+        PRINT   *SUB
+        TRUE    E1
+E3      FLAG
+E9      RETURN
+
+TERM    CALL    FACTOR
+        FALSE   T9
+T1      MATCH   *
+        FALSE   T2
+        CALL    FACTOR
+        FALSE   T9
+        PRINT   *MUL
+        TRUE    T1
+T2      MATCH   /
+        FALSE   T3
+        CALL    FACTOR
+        FALSE   T9
+        PRINT   *DIV
+        TRUE    T1
+T3      FLAG
+T9      RETURN
+
+FACTOR  CALL    VAR
+        FALSE   F1
+        PRINT   *CLA
+        RETURN
+F1      CALL    NUMBER
+        TRUE    F9
+        MATCH   (
+        FALSE   F9
+        CALL    EXPR
+        FALSE   F9
+        MATCH   )
+F9      RETURN
+
+VAR     CALL    LETTER
+        FALSE   V9
+        COPY
+V1      CALL    LETTER
+        TRUE    V2
+        CALL    DIGIT
+        FALSE   V3
+V2      COPY
+        EDIT    C
+        TRUE    V1
+V3      FLAG
+V9      RETURN
+NUMBER  CALL    DIGIT
+        FALSE   N9
+        COPY
+N1      CALL    DIGIT
+        FALSE   N2
+        COPY
+        EDIT    C
+        TRUE    N1
+N2      FLAG
+N9      RETURN
+
+LETTER  MATCH   A
+        TRUE    LE9
+        MATCH   B
+        TRUE    LE9
+        MATCH   C
+        TRUE    LE9
+        MATCH   D
+        TRUE    LE9
+        MATCH   E
+        TRUE    LE9
+        MATCH   F
+        TRUE    LE9
+        MATCH   I
+        TRUE    LE9
+        MATCH   O
+        TRUE    LE9
+        MATCH   S
+        TRUE    LE9
+        MATCH   T
+        TRUE    LE9
+        MATCH   X
+LE9     RETURN
+DIGIT   MATCH   0
+        TRUE    D9
+        MATCH   1
+        TRUE    D9
+        MATCH   2
+D9      RETURN

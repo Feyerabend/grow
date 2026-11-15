@@ -1,0 +1,8 @@
+-O2 as it is       ADD: 30 instructions, 0 of them calls, ending in its own indirect jump;
+    calls to push, push_int, pop or number in all of run: 0
+-O2 static inline  ADD: 30 instructions, 0 of them calls, ending in its own indirect jump;
+    calls to push, push_int, pop or number in all of run: 0
+-O0 as it is       ADD: 14 instructions, 6 of them calls, ending in a jump to a shared one;
+    calls to push, push_int, pop or number in all of run: 99
+-O0 static inline  ADD: 14 instructions, 6 of them calls, ending in a jump to a shared one;
+    calls to push, push_int, pop or number in all of run: 99

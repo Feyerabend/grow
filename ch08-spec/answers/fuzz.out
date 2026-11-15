@@ -1,0 +1,4 @@
+1000 programs, every jump and call forward
+  still running after a second: 0
+  halted without a trap: 54
+  vm.c and vm.py differ: 0

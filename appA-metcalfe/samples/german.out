@@ -1,0 +1,5 @@
+THE BOY SEES A TREE  =>  flag true; DER KNABE SEHT EINEN BAUM
+A BOY SEES THE TREE  =>  flag true; EIN KNABE SEHT DEN BAUM
+THE TREE SEES THE BOY  =>  flag true; DER BAUM SEHT DEN KNABE
+A TREE SEES A BOY  =>  flag true; EIN BAUM SEHT EINEN KNABE
+THE BOY A TREE SEES  =>  flag false, stopped at symbol 1 of 5

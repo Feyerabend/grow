@@ -1,0 +1,6 @@
+room-where
+  at every push: verified; 65 lines, the last 64 / trap: stack overflow at 15; status 1
+  at each CALL:  verified; 64 lines, the last 63 / trap: stack overflow at 20; status 1
+room-unused
+  at every push: verified; 1 line, the last 1; status 0
+  at each CALL:  verified; 1 line, the last trap: stack overflow at 14; status 1

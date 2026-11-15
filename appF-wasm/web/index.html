@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One module, two machines</title>
+<style>
+  :root {
+    --bg: #f4f3ef; --panel: #ffffff; --ink: #1d1f23; --muted: #5f6570;
+    --line: #d9d7d0; --accent: #5b3fa0; --good: #2f6b3a; --bad: #a33a2a; --code: #f6f5f1;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #14151a; --panel: #1c1e24; --ink: #e7e8ec; --muted: #9aa0ab;
+      --line: #2d3039; --accent: #a993e6; --good: #7cc38a; --bad: #e08070; --code: #23252c;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 1040px; margin: 0 auto; padding: 18px 16px 32px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted);
+       margin: 0 0 8px; }
+  p { margin: 6px 0; }
+  .lead { color: var(--muted); max-width: 70ch; }
+  section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+            padding: 14px; margin-top: 16px; min-width: 0; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; margin-top: 12px; }
+  @media (max-width: 720px) { .two { grid-template-columns: minmax(0, 1fr); } }
+  select, button { font: inherit; color: var(--ink); background: var(--panel);
+                   border: 1px solid var(--line); border-radius: 6px; padding: 5px 12px; }
+  button { cursor: pointer; background: var(--accent); color: #fff; border-color: var(--accent); }
+  pre, code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: 13px; }
+  pre { background: var(--code); border: 1px solid var(--line); border-radius: 6px; padding: 8px;
+        margin: 6px 0; min-height: 3.2em; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .end { min-height: 1.5em; }
+  .end.trap { color: var(--bad); }
+  .time { color: var(--muted); }
+  #verdict { font-weight: 600; margin-top: 10px; min-height: 1.5em; }
+  #verdict.same { color: var(--good); }
+  #verdict.differ { color: var(--bad); }
+  .bytes { overflow-wrap: anywhere; }
+</style>
+</head>
+<body>
+<main>
+  <h1>One module, two machines</h1>
+  <p class="lead">Chapter 23's machine, the book's machine compiled to WebAssembly 1.0, runs a
+    program twice: once on this browser's own WebAssembly engine, and once on appendix F's
+    machine, <code>wasm.c</code>, itself compiled to WebAssembly and running inside the same
+    engine. What the two print, and how the program ends, must be the same.</p>
+
+  <section>
+    <h2>A program of the book's</h2>
+    <div class="row">
+      <select id="program" aria-label="Program"></select>
+      <button id="run">Run both</button>
+    </div>
+    <div class="two">
+      <div>
+        <h2>The browser's engine</h2>
+        <pre id="out-native"></pre>
+        <div class="end mono" id="end-native"></div>
+        <div class="time" id="time-native"></div>
+      </div>
+      <div>
+        <h2>Appendix F's machine, in the browser</h2>
+        <pre id="out-f"></pre>
+        <div class="end mono" id="end-f"></div>
+        <div class="time" id="time-f"></div>
+      </div>
+    </div>
+    <div id="verdict" role="status"></div>
+    <p class="lead">Each time is the whole run: making the machine, loading chapter 23's module
+      and the program, and running it. Appendix F's machine counts the WebAssembly
+      instructions it runs; most of them are the book's machine clearing its memory before the
+      program starts.</p>
+  </section>
+
+  <section>
+    <h2>A module that must be refused</h2>
+    <p>One function, typed to return an <code>i32</code>, whose body leaves an <code>i64</code>:
+      <code>(func (result i32) i64.const 0)</code>. Validation must refuse it, in both
+      machines, before anything runs.</p>
+    <pre class="bytes" id="broken"></pre>
+    <div class="two">
+      <div><h2>The browser's engine</h2><div class="end trap mono" id="refuse-native"></div></div>
+      <div><h2>Appendix F's machine</h2><div class="end trap mono" id="refuse-f"></div></div>
+    </div>
+  </section>
+</main>
+<script src="data.js"></script>
+<script src="both.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

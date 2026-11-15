@@ -1,0 +1,150 @@
+--- class.c	2026-11-15 00:16:38
++++ class.c	2026-11-15 00:16:38
+@@ -240,13 +240,13 @@
+     }
+     c->minor = u2(&r);
+     c->major = u2(&r);
+-    /* Class files from Java SE 6 (version 50) to Java SE 21 (65): the ones
+-     * that are verified by type checking (4.10.1), in the edition read. */
+-    if (r.bad || c->major < 50 || c->major > 65 ||
++    /* Class files from JDK 1.0.2 (version 45) to Java SE 21 (65): below 50
++     * verified by type inference (4.10.2), from 50 by type checking. */
++    if (r.bad || c->major < 45 || c->major > 65 ||
+         (c->major >= 56 && c->minor != 0)) {
+         snprintf(jvm_error, sizeof jvm_error,
+                  "java.lang.UnsupportedClassVersionError: version %u.%u, "
+-                 "where this machine takes 50.0 to 65.0", c->major, c->minor);
++                 "where this machine takes 45.0 to 65.0", c->major, c->minor);
+         return NULL;
+     }
+     c->count = u2(&r);
+--- verify.c	2026-11-15 00:16:38
++++ verify.c	2026-11-15 00:16:38
+@@ -520,12 +520,73 @@
+ static MapFrame *frames;
+ static int nframes;
+ static int *frame_at;           /* per offset: the index of its frame, or -1 */
++
++/* Verification by type inference, 4.10.2, for class files below version
++ * 50: no frames are given, so the verifier works them out. Each
++ * instruction has a state, the types before it, and a "changed" bit; the
++ * types after an instruction are merged into the state of each one that
++ * can follow it, until nothing changes. */
++static int inferring;
++static Frame *state;
++static uint8_t *seen, *changed;
++static long visits;
++
++static Type merge_types(Type a, Type b, int local, int *ok) {
++    *ok = 1;
++    if (a == b)
++        return a;
++    int ra = TAG(a) == REF || a == NUL, rb = TAG(b) == REF || b == NUL;
++    if (ra && rb) {
++        /* the first common supertype: here, one of the two, or Object */
++        if (assignable(a, b) == 1)
++            return b;
++        if (assignable(b, a) == 1)
++            return a;
++        return ref("java/lang/Object", 16);
++    }
++    if (local)          /* a local that is two things is unusable */
++        return TOP;
++    *ok = 0;
++    return TOP;
++}
++
++static int merge_into(uint32_t to) {
++    Frame *s = &state[to];
++    if (!seen[to]) {
++        *s = new_frame(method);
++        copy_frame(s, &cur);
++        seen[to] = changed[to] = 1;
++        return 1;
++    }
++    if (s->sp != cur.sp)
++        return refuse("inconsistent stack height where paths meet", NULL);
++    int ok, any = 0;
++    for (int i = 0; i < cur.sp; i++) {
++        Type t = merge_types(s->stack[i], cur.stack[i], 0, &ok);
++        if (!ok)
++            return refuse("incompatible types on the stack where paths meet", NULL);
++        any |= t != s->stack[i];
++        s->stack[i] = t;
++    }
++    for (int i = 0; i < method->max_locals; i++) {
++        Type t = merge_types(s->locals[i], cur.locals[i], 1, &ok);
++        any |= t != s->locals[i];
++        s->locals[i] = t;
++    }
++    if (cur.uninit && !s->uninit)
++        s->uninit = any = 1;
++    if (any)
++        changed[to] = 1;
++    return 1;
++}
+ 
+ /* targetIsTypeSafe: the target has a frame, and the types now are
+  * assignable to it. */
+ static int target(int64_t to) {
+     if (to < 0 || to >= method->code_length || frame_at[to] == -2)
+         return refuse("branch to the middle of an instruction or out of the code", NULL);
++    if (inferring)
++        return merge_into((uint32_t)to);
+     if (frame_at[to] < 0)
+         return refuse("expecting a stack map frame at the branch target", NULL);
+     return frame_assignable(&cur, &frames[frame_at[to]].frame);
+@@ -810,6 +871,53 @@
+         if (++k > m->max_locals)
+             return refuse("arguments do not fit in max_locals", NULL);
+     }
++    if (current->major < 50) {
++        /* The data-flow analysis of 4.10.2.2: until no bit is set, take an
++         * instruction whose "changed" bit is set, and merge what it leaves
++         * into what follows it. Its StackMapTable, if any, is not used. */
++        inferring = 1;
++        state = calloc(n, sizeof *state);
++        seen = calloc(n, 1);
++        changed = calloc(n, 1);
++        cur = initial;
++        merge_into(0);
++        long before = visits;
++        for (uint32_t pc = 0; pc < n; ) {
++            if (!changed[pc]) {
++                pc += instruction_length(code, n, pc);
++                continue;
++            }
++            changed[pc] = 0;
++            at = pc;
++            cur = new_frame(m);
++            copy_frame(&cur, &state[pc]);
++            int goes_on;
++            visits++;
++            if (!instruction(code, pc, &goes_on))
++                return 0;
++            uint32_t next = pc + instruction_length(code, n, pc);
++            if (goes_on) {
++                at = next;
++                if (next >= n)
++                    return refuse("falling off the end of the code", NULL);
++                if (!merge_into(next))
++                    return 0;
++            }
++            /* start again from the first instruction whose bit is set */
++            for (pc = 0; pc < n && !changed[pc]; pc++)
++                ;
++            if (pc == n)
++                break;
++        }
++        int count = 0;
++        for (uint32_t pc = 0; pc < n; pc += instruction_length(code, n, pc))
++            count++;
++        if (verify_trace)
++            printf("%s.%s%s: %d instructions, %ld visits\n", current->name, m->name,
++                   m->descriptor, count, visits - before);
++        return 1;
++    }
++    inferring = 0;
+     if (!read_frames(&initial, k, &frames, &nframes))
+         return 0;
+     for (int i = 0; i < nframes; i++) {

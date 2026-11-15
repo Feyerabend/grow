@@ -1,0 +1,49 @@
+the model agrees with the machine for every turn from 1 to 30
+
+turn 2: total 1000; the first turns, with each LOADM and STOREM and what it saw:
+  a:    (stops before JZ done)
+  b:    (stops before JZ done)
+  a:    (stops before LOADM)
+  b:    (stops before LOADM)
+  a: LOADM=0   (stops before ADD)
+  b: LOADM=0   (stops before ADD)
+
+turn 3: total 1000; the first turns, with each LOADM and STOREM and what it saw:
+  a:    (stops before PUSH 0)
+  b:    (stops before PUSH 0)
+  a: LOADM=0   (stops before ADD)
+  b: LOADM=0   (stops before ADD)
+  a:    (stops before STOREM)
+  b:    (stops before STOREM)
+
+turn 5: total 1000; the first turns, with each LOADM and STOREM and what it saw:
+  a: LOADM=0   (stops before PUSH 1)
+  b: LOADM=0   (stops before PUSH 1)
+  a: STOREM=1   (stops before LOAD 1)
+  b: STOREM=1   (stops before LOAD 1)
+  a:    (stops before LOAD 1)
+  b:    (stops before LOAD 1)
+
+turn 7: total 1000; the first turns, with each LOADM and STOREM and what it saw:
+  a: LOADM=0   (stops before PUSH 0)
+  b: LOADM=0   (stops before PUSH 0)
+  a: STOREM=1   (stops before JMP next)
+  b: STOREM=1   (stops before JMP next)
+  a: LOADM=1   (stops before PUSH 0)
+  b: LOADM=1   (stops before PUSH 0)
+
+turn 10: total 1600; the first turns, with each LOADM and STOREM and what it saw:
+  a: LOADM=0 STOREM=1   (stops before LOAD 1)
+  b: LOADM=1 STOREM=2   (stops before LOAD 1)
+  a: LOADM=2   (stops before ADD)
+  b: LOADM=2   (stops before ADD)
+  a: STOREM=3   (stops before JZ done)
+  b: STOREM=3   (stops before JZ done)
+
+turn 14: total 2000; the first turns, with each LOADM and STOREM and what it saw:
+  a: LOADM=0 STOREM=1   (stops before JMP next)
+  b: LOADM=1 STOREM=2   (stops before JMP next)
+  a: LOADM=2 STOREM=3   (stops before JMP next)
+  b: LOADM=3 STOREM=4   (stops before JMP next)
+  a: LOADM=4 STOREM=5   (stops before JMP next)
+  b: LOADM=5 STOREM=6   (stops before JMP next)

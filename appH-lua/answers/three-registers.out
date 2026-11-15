@@ -1,0 +1,10 @@
+S18:
+        ADD r3, r0, r2              ; from 22
+        MOV r0, r3                  ; from 23
+        PRINT r3                    ; from 27
+        ADDI r3, r0, 1              ; from 32
+        PRINT r3                    ; from 37
+        GETF r3, r1, r2             ; from 42
+        PRINT r3                    ; from 47
+        MOVI r3, 0                  ; from 48
+        RET r3                      ; from 50

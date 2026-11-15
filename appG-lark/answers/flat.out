@@ -1,0 +1,4 @@
+50 programs print what Lark's machine printed
+fib: lark: 1078 collections, 1528720 bytes copied, heap at most 524360 bytes of 1048576
+loop: lark: 4580 collections, 1832200 bytes copied, heap at most 524400 bytes of 1048576
+sort: lark: 1366 collections, 172989040 bytes copied, heap at most 1048712 bytes of 2097152

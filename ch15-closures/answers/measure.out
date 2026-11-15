@@ -1,0 +1,27 @@
+call                        compiled         instructions  blocks  frames
+fib 20                      as in lambda.py        361214       1      20   prints 6765
+fib 20                      -once                  361214       1      20   prints 6765
+fib 20                      -direct                361214       1      20   prints 6765
+fib 20                      -tail                  361214       1      20   prints 6765
+fib 20                      all three              361214       1      20   prints 6765
+gcd 1836311903 1134903170   as in lambda.py          1769      46      45   prints 1
+gcd 1836311903 1134903170   -once                    1769      46      45   prints 1
+gcd 1836311903 1134903170   -direct                   599       1      45   prints 1
+gcd 1836311903 1134903170   -tail                    1725      46       2   prints 1
+gcd 1836311903 1134903170   all three                 599       1       1   prints 1
+ack 2 3                     as in lambda.py          1976      45      10   prints 9
+ack 2 3                     -once                    1976      45      10   prints 9
+ack 2 3                     -direct                   746       1      10   prints 9
+ack 2 3                     -tail                    1947      45       9   prints 9
+ack 2 3                     all three                 741       1       8   prints 9
+
+sample           instructions    -once  blocks   -once
+closures.lam              299      315      11      11
+data.lam                 5987     5963     196     174
+garbage.lam           1655774  1590254   65569   49186
+recursion.lam          363539   363539      52      52
+
+closures.lam: all three, copying, stress: the same
+data.lam: all three, copying, stress: the same
+garbage.lam: all three, copying, stress: the same
+recursion.lam: all three, copying, stress: the same

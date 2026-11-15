@@ -1,0 +1,6 @@
+B = (A+1)/2  =>  flag true; B A *CLA 1 *ADD 2 *DIV *STO
+T = B  =>  flag true; T B *CLA *STO
+B = B + (A/B - B)/2  =>  flag true; B B *CLA A *CLA B *CLA *DIV B *CLA *SUB 2 *DIV *ADD *STO
+IF B-T=+,GOTO S1  =>  flag true; B *CLA T *CLA *SUB S1 *TPL
+X = A*B + C*D  =>  flag true; X A *CLA B *CLA *MUL C *CLA D *CLA *MUL *ADD *STO
+X = A +  =>  flag false, stopped at symbol 1 of 4

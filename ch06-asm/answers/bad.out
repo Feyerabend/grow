@@ -1,0 +1,11 @@
+bad.asm:4: undefined label 'nowhere'
+bad.asm:5: a local number cannot be negative: -1
+bad.asm:6: expected a number, found 'x'
+bad.asm:7: ADD takes 0 operands, found 1
+bad.asm:8: number out of range: 99999999999
+bad.asm:9: unknown instruction 'FOO'
+bad.asm:10: .word takes one number
+bad.asm:11: label 'start' is defined twice
+bad.asm:12: CALL takes 2 operands, found 1
+bad.asm:13: undefined label 'nowhere'
+asm.py says the same

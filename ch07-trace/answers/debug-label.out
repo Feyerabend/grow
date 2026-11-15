@@ -1,0 +1,10 @@
+    0  PUSH 2
+(vm) (vm)    29  PUSH 2
+(vm) stack: 2 | 2
+frame 1: returns to 14, locals start at 1
+(vm) 2
+   29  PUSH 2
+(vm) stack: 3 | 3
+frame 1: returns to 14, locals start at 1
+(vm) no label nowhere
+(vm) 

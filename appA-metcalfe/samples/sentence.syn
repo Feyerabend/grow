@@ -1,0 +1,41 @@
+; Metcalfe's first syntax program: the grammar of "The boy sees a tree".
+;
+;   <sentence>    ::= <subject> <predicate>
+;   <subject>     ::= <noun phrase>
+;   <noun phrase> ::= <article> <noun>
+;   <predicate>   ::= <verb> <object>
+;   <object>      ::= <noun phrase>
+;   <article>     ::= THE | A
+;   <noun>        ::= BOY | TREE
+;   <verb>        ::= SEES
+;
+; 28 instructions, at locations 0 to 27, as in his report.
+
+        CALL    SEN
+        STOP
+SEN     CALL    SUB
+        FALSE   L1
+        CALL    PRE
+L1      RETURN
+SUB     CALL    NP
+        RETURN
+NP      CALL    ART
+        FALSE   L2
+        CALL    NN
+L2      RETURN
+ART     MATCH   THE
+        TRUE    L3
+        MATCH   A
+L3      RETURN
+NN      MATCH   BOY
+        TRUE    L4
+        MATCH   TREE
+L4      RETURN
+PRE     CALL    VB
+        FALSE   L5
+        CALL    OBJ
+L5      RETURN
+VB      MATCH   SEES
+        RETURN
+OBJ     CALL    NP
+        RETURN

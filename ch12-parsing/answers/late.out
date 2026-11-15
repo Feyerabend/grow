@@ -1,0 +1,15 @@
+(1 + 2 * 3;      the ) deleted, after the 2: column 7
+  descent      1:11: expected ')', found ';'
+  pratt        1:11: expected ')', found ';'
+  combinators  1:11: expected '%' or ')' or '*' or '+' or '-' or '/' or '<' or '=', found ';'
+  shunting     1:11: expected ')', found ';'
+((1 + 2) * 3;    a ( doubled, at the start: column 1
+  descent      1:13: expected ')', found ';'
+  pratt        1:13: expected ')', found ';'
+  combinators  1:13: expected '%' or ')' or '*' or '+' or '-' or '/' or '<' or '=', found ';'
+  shunting     1:13: expected ')', found ';'
+1 + 2 3;         the + deleted: column 7, before the 3
+  descent      1:7: expected ';', found '3'
+  pratt        1:7: expected ';', found '3'
+  combinators  1:7: expected '%' or '*' or '+' or '-' or '/' or ';' or '<' or '=', found '3'
+  shunting     1:7: expected ';', found '3'

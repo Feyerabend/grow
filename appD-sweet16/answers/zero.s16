@@ -1,0 +1,10 @@
+; Exercise D.1: nine bytes set to zero, from A034. The bytes, as
+; assembled by hand from the table, are in zero-run.s16.
+
+        SET R1, $A034   ; 11 34 A0   where
+        SET R2, 9       ; 12 09 00   how many
+        SUB R0          ; B0         R0 := R0 - R0, which is 0
+loop:   ST @R1          ; 51         the byte at R1 := R0, and move R1 on
+        DCR R2          ; F2
+        BNZ loop        ; 07 FC      back four bytes, to loop
+        RTN             ; 00

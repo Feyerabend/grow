@@ -1,0 +1,13 @@
+
+     1        9 program result(output); 
+     2        9 var x: integer; 
+     3       10  
+     4       10     function f: integer; 
+     5        5     begin 
+     6        3         f := 1 
+     7        5     end; 
+     8        8  
+     9        8 begin 
+    10        8     f := 2 
+    10   ****          ^177
+    11       10 end. 

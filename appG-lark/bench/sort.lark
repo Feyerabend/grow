@@ -1,0 +1,72 @@
+(* Benchmark: merge sort, a hundred times over, of a list of 1000 numbers
+   made by a linear congruential generator: lists built and dropped. *)
+
+module Sort
+
+type List a =
+  | Nil
+  | Cons of a, List(a)
+
+impl Copy for List(Int) = {}
+
+fn rem(a : Int, b : Int) : Int = a - (a / b) * b
+
+fn numbers(n : Int, seed : Int, acc : List(Int)) : List(Int) =
+  if n == 0 then acc
+  else
+    let next = rem(seed * 1103515245 + 12345, 1000003) in
+    numbers(n - 1, next, Cons(next, acc))
+
+fn length(xs : List(Int)) : Int =
+  match xs with
+  | Nil           => 0
+  | Cons(_, rest) => 1 + length(rest)
+  end
+
+fn take(n : Int, xs : List(Int)) : List(Int) =
+  if n <= 0 then Nil
+  else
+    match xs with
+    | Nil           => Nil
+    | Cons(h, rest) => Cons(h, take(n - 1, rest))
+    end
+
+fn drop(n : Int, xs : List(Int)) : List(Int) =
+  if n <= 0 then xs
+  else
+    match xs with
+    | Nil           => Nil
+    | Cons(_, rest) => drop(n - 1, rest)
+    end
+
+fn merge(xs : List(Int), ys : List(Int)) : List(Int) =
+  match xs with
+  | Nil             => ys
+  | Cons(x, xrest)  =>
+    match ys with
+    | Nil             => Cons(x, xrest)
+    | Cons(y, yrest)  =>
+      if x <= y then Cons(x, merge(xrest, Cons(y, yrest)))
+      else           Cons(y, merge(Cons(x, xrest), yrest))
+    end
+  end
+
+fn sort(xs : List(Int)) : List(Int) =
+  let n = length(xs) in
+  if n <= 1 then xs
+  else
+    let half  = n / 2 in
+    merge(sort(take(half, xs)), sort(drop(half, xs)))
+
+fn check(xs : List(Int), acc : Int) : Int =
+  match xs with
+  | Nil           => acc
+  | Cons(h, rest) => check(rest, rem(acc * 31 + h, 1000003))
+  end
+
+fn rounds(k : Int, acc : Int) : Int =
+  if k == 0 then acc
+  else rounds(k - 1, rem(acc + check(sort(numbers(1000, k, Nil)), 0), 1000003))
+
+fn main(io : IO) : IO =
+  print(io, show(rounds(100, 0)))

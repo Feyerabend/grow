@@ -1,0 +1,115 @@
+--- emit.py
++++ emit.py, flat
+@@ -110,6 +110,36 @@
+     return -1
+ 
+ 
++def free(e):
++    """The names an expression uses and does not bind itself."""
++    if isinstance(e, TLit):
++        return set()
++    if isinstance(e, (TVar, TCon)):
++        return {e.name}
++    if isinstance(e, TTupleExpr):
++        return set().union(*(free(x) for x in e.elems))
++    if isinstance(e, TApply):
++        return free(e.fn).union(*(free(a) for a in e.args))
++    if isinstance(e, TBinOp):
++        return free(e.left) | free(e.right)
++    if isinstance(e, TUnaryOp):
++        return free(e.operand)
++    if isinstance(e, TLetExpr):
++        return free(e.value) | (free(e.body) - {e.name})
++    if isinstance(e, TIfExpr):
++        return free(e.cond) | free(e.then_) | free(e.else_)
++    if isinstance(e, TMatchExpr):
++        names = free(e.scrutinee)
++        for p, b in e.arms:
++            bound = []
++            pattern(p, bound)
++            names |= free(b) - set(bound)
++        return names
++    if isinstance(e, TLambda):
++        return free(lambdas(e.params[1:], e.body)) - {e.params[0][0]}
++    raise TypeError(f"free: {type(e).__name__}")
++
++
+ def expr(e, scope):
+     if isinstance(e, TLit):
+         return literal(e.value)
+@@ -140,7 +170,16 @@
+     if isinstance(e, TLambda):
+         param = e.params[0][0]
+         body = lambdas(e.params[1:], e.body)
+-        return f"(lambda {quote(param)} {expr(body, [param] + scope)})"
++        # The closure keeps only the cells its body uses: their depths
++        # here, innermost first. In the body they come after the
++        # parameter, in the same order.
++        used = free(body) - {param}
++        kept = []
++        for n in scope:
++            if n in used and n not in kept:
++                kept.append(n)
++        depths = " ".join(str(where(n, scope)) for n in kept)
++        return f"(lambda {quote(param)} ({depths}) {expr(body, [param] + kept)})"
+     raise TypeError(f"expr: {type(e).__name__}")
+ 
+ 
+--- cek.h
++++ cek.h, flat
+@@ -139,6 +139,8 @@
+         struct {                                   /* EXPR_LAMBDA */
+             const char*   param;
+             const LkExpr* body;
++            int           n_kept;  /* the cells the closure keeps, */
++            const int*    kept;    /* by depth, innermost first */
+         } lam;
+     };
+ };
+--- tree.c
++++ tree.c, flat
+@@ -232,6 +232,17 @@
+     } else if (!strcmp(kind, "lambda")) {
+         e->kind = EXPR_LAMBDA;
+         e->lam.param = string();
++        open_();
++        int cap = 4, n = 0;
++        int *kept = room(sizeof *kept * (size_t)cap);
++        while (!closing()) {
++            if (n == cap)
++                kept = realloc(kept, sizeof *kept * (size_t)(cap *= 2));
++            kept[n++] = (int)number();
++        }
++        close_();
++        e->lam.n_kept = n;
++        e->lam.kept = kept;
+         e->lam.body = expr();
+     } else if (!strcmp(kind, "match")) {
+         e->kind = EXPR_MATCH;
+--- cek.c
++++ cek.c, flat
+@@ -952,10 +952,21 @@
+                     _expr = e->match.scrutinee;
+                     break;
+ 
+-                case EXPR_LAMBDA:
+-                    _mode = MODE_RET;
+-                    _val  = lk_closure(e->lam.param, e->lam.body, env, NULL);
++                case EXPR_LAMBDA: {
++                    /* A chain of its own, of only the cells the body uses,
++                     * the outermost bound first. Nothing moves during a
++                     * step, so env stays valid while it is made. */
++                    LkEnv* own = NULL;
++                    for (int k = e->lam.n_kept - 1; k >= 0; k--) {
++                        LkEnv* n = env;
++                        for (int d = e->lam.kept[k]; d > 0; d--)
++                            n = n->next;
++                        own = env_bind(own, n->name, n->val);
++                    }
++                    _mode = MODE_RET;
++                    _val  = lk_closure(e->lam.param, e->lam.body, own, NULL);
+                     break;
++                }
+ 
+                 default:
+                     fprintf(stderr, "lark: unknown expr kind %d\n", e->kind);

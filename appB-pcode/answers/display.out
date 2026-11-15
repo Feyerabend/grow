@@ -1,0 +1,5 @@
+pcom compiles itself to the same code
+    13520025 instructions
+      902822 static links not followed
+      547714 entries of the display written
+the suite's programs compile and print the same

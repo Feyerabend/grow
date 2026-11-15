@@ -1,0 +1,5 @@
+; exercise 1: square(3) + square(4)
+        PUSH 3  CALL square 1
+        PUSH 4  CALL square 1
+        ADD  PRINT  HALT
+square: LOAD 0  LOAD 0  MUL  RET

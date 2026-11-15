@@ -1,0 +1,9 @@
+empty        compiled to WebAssembly: right, 3064 bytes
+fib          compiled to WebAssembly: right, 6695 bytes
+loop         compiled to WebAssembly: right, 4016 bytes
+sieve        compiled to WebAssembly: right, 14045 bytes
+closures     compiled to WebAssembly: right, 58300 bytes
+enkel-sieve  compiled to WebAssembly: right, 4505 bytes
+basal-loop   compiled to WebAssembly: right, 13943 bytes
+answers/wasm/vmw: 71 of 71 passed
+answers/wasm/vmw -g copy -S: 71 of 71 passed

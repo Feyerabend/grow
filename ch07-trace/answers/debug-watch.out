@@ -1,0 +1,13 @@
+    0  PUSH 2
+(vm) (vm) 2
+3
+watch 49: top of stack 2 -> 0
+   50  JZ 61
+(vm) watch 49: top of stack 2 -> 1
+   50  JZ 61
+(vm) 5
+watch 49: top of stack 2 -> 0
+   50  JZ 61
+(vm) stack: 6 | 6 2 0
+frame 1: returns to 14, locals start at 1
+(vm) 

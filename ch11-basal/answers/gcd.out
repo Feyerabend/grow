@@ -1,0 +1,2 @@
+enkel/0  prints   3;  35 instructions,  66 run:   2 LOADM/STOREM,  24 LOAD/STORE,   9 PUSH, 2 CALL/RET
+basal/0  prints   3;  41 instructions,  86 run:  26 LOADM/STOREM,   0 LOAD/STORE,  32 PUSH, 0 CALL/RET

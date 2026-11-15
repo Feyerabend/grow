@@ -1,0 +1,20 @@
+   18  15 0             f:      LOAD 0          ; a = a + i
+   20  15 2                     LOAD 2
+   22  2                        ADD
+   23  16 0                     STORE 0
+   25  15 0                     LOAD 0
+   27  5                        PRINT
+   28  15 0                     LOAD 0          ; a = a + 1
+   30  1 1                      PUSH 1
+   32  2                        ADD
+   33  16 0                     STORE 0
+   35  15 0                     LOAD 0
+   37  5                        PRINT
+   38  15 1                     LOAD 1          ; a = t[i]
+   40  15 2                     LOAD 2
+   42  28                       GETF
+   43  16 0                     STORE 0
+   45  15 0                     LOAD 0
+   47  5                        PRINT
+   48  1 0                      PUSH 0
+   50  18                       RET

@@ -1,0 +1,9 @@
+; exercise 3: the test at the bottom, with JNZ: a b n
+        PUSH 0 PUSH 1 PUSH 10
+loop:   PUSH 1 SUB
+        ROT ROT
+        OVER PRINT
+        SWAP OVER ADD
+        ROT
+        DUP JNZ loop
+        HALT

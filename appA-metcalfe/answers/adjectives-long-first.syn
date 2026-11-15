@@ -1,0 +1,26 @@
+; Exercise 3: the same grammar, with the longer alternative tried first.
+; It is a rule of its own, MORE, so that when it fails its RETURN winds
+; the tape back, and the short alternative starts where it did.
+;
+;   <list> ::= <adj> <list> | <adj>
+
+        CALL    PHRASE
+        STOP
+PHRASE  CALL    LIST
+        FALSE   P9
+        CALL    NOUN
+P9      RETURN
+LIST    CALL    MORE
+        TRUE    L9
+        CALL    ADJ
+L9      RETURN
+MORE    CALL    ADJ
+        FALSE   M9
+        CALL    LIST
+M9      RETURN
+ADJ     MATCH   BIG
+        TRUE    A9
+        MATCH   BAD
+A9      RETURN
+NOUN    MATCH   BEAR
+        RETURN

@@ -1,0 +1,9 @@
+-dup-anywhere answers/dup-overflow.asm: behaves differently
+96 programs, each optimised four ways
+-dup used in: answers/storeload.asm (2), samples/heap-lists.asm (1)
+-dup-anywhere used in: answers/dup-overflow.asm (1), answers/storeload.asm (2), samples/enkel-bubble-sort.asm (3), samples/enkel-recursive-factorial.asm (1), samples/heap-lists.asm (1), suite/calls.asm (1)
+-assoc used in: answers/assoc.asm (8)
+
+storeload              as it is            -dup
+vm-threaded         329,999,997     329,999,997   dispatched
+vm-super            249,999,999     269,999,998   dispatched

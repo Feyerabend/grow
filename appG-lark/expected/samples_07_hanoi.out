@@ -1,0 +1,17 @@
+move disk 1: A -> B
+move disk 2: A -> C
+move disk 1: B -> C
+move disk 3: A -> B
+move disk 1: C -> A
+move disk 2: C -> B
+move disk 1: A -> B
+move disk 4: A -> C
+move disk 1: B -> C
+move disk 2: B -> A
+move disk 1: C -> A
+move disk 3: B -> C
+move disk 1: A -> B
+move disk 2: A -> C
+move disk 1: B -> C
+15 moves total
+status 0

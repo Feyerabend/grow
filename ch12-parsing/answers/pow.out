@@ -1,0 +1,12 @@
+2 ^ 3 ^ 2;             (^ 2 (^ 3 2))
+-2 ^ 2;                (neg (^ 2 2))
+2 * 3 ^ 2;             (* 2 (^ 3 2))
+2 ^ -1;                (^ 2 (neg 1))
+(2 ^ 3) ^ 2;           (^ (^ 2 3) 2)
+1 + 2 ^ 3 * 4 < 5;     (< (+ 1 (* (^ 2 3) 4)) 5)
+
+lines changed, not counting the import of common_pow:
+  descent      1 removed, 8 added
+  pratt        1 removed, 2 added
+  combinators  1 removed, 5 added
+  common       1 removed, 1 added  (the scanner, shared)

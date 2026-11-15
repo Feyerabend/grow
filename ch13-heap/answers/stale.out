@@ -1,0 +1,2 @@
+NEW zeroes         prints ['0', '0']; halts
+NEW does not zero  prints ['1', '0']; halts

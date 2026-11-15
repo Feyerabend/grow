@@ -1,0 +1,3 @@
+semicolon.expr:2:6: missing ';' after this expression
+    3 * 4
+         ^

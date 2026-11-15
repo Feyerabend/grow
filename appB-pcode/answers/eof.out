@@ -1,0 +1,26 @@
+mended pcom compiles itself to the same code
+
+     1        9 program p(output); begin   *** eof encountered
+
+   *** eof encountered
+
+     2   ****  ,6,13,6,21
+status 0
+
+     1        9 program p(output); var x: integer; begin x := 12   *** eof encountered
+
+   *** eof encountered
+
+     2   ****  ,6,6,13,6,21
+status 0
+
+     1        9 program hello(output)/ 
+     1   ****                        ^14,18
+     2        9 begin 
+     3        3     writeln('Hello, world!') 
+     4       10 end   *** eof encountered
+
+   *** eof encountered
+
+     5   ****  ,6,21
+status 0

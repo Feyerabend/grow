@@ -1,0 +1,41 @@
+; The four differences between the VIP and CHIP-48, each leaving a digit
+; in a register, and the four digits drawn: 1 0 0 1 on the VIP, 3 5 8 2
+; with -m chip48.
+
+6B06    ; 200  VB := 6
+6203    ; 202  V2 := 3
+8B26    ; 204  VB := shifted right: V2 >> 1 = 1 on the VIP, VB >> 1 = 3 on CHIP-48
+6F05    ; 206  VF := 5
+6300    ; 208  V3 := 0
+6400    ; 20A  V4 := 0
+8341    ; 20C  V3 |= V4: VF := 0 on the VIP, VF stays 5 on CHIP-48
+8AF0    ; 20E  VA := VF
+6007    ; 210  V0 := 7
+6108    ; 212  V1 := 8
+A300    ; 214  I := 300
+F155    ; 216  store V0, V1 at 300, 301: I is then 302 on the VIP, 301 on CHIP-48
+F065    ; 218  V0 := the byte at I: 0 on the VIP, 8 on CHIP-48
+8C00    ; 21A  VC := V0
+6000    ; 21C  V0 := 0
+6204    ; 21E  V2 := 4
+B228    ; 220  go to 228 + V0 on the VIP, 228 + V2 on CHIP-48
+1222    ; 222  (not reached)
+1222    ; 224
+1222    ; 226
+6D01    ; 228  VD := 1
+122E    ; 22A  jump over the next
+6D02    ; 22C  VD := 2
+6305    ; 22E  V3 := 5              x
+640C    ; 230  V4 := 12             y
+FB29    ; 232  I := the picture of digit VB
+D345    ; 234  draw it
+7306    ; 236  V3 += 6
+FA29    ; 238  VA
+D345    ; 23A
+7306    ; 23C
+FC29    ; 23E  VC
+D345    ; 240
+7306    ; 242
+FD29    ; 244  VD
+D345    ; 246
+1248    ; 248  the end

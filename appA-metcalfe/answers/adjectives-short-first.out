@@ -1,0 +1,4 @@
+BIG BAD BEAR  =>  flag false, stopped at symbol 1 of 3
+BIG BEAR  =>  flag true
+BEAR  =>  flag false, stopped at symbol 1 of 1
+BIG BAD BAD BEAR  =>  flag false, stopped at symbol 1 of 4

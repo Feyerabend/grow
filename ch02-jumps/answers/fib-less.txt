@@ -1,0 +1,8 @@
+; exercise 5: no counter; stop when the next a reaches 55: a b
+        PUSH 0 PUSH 1
+loop:   OVER PRINT              ; print a
+        SWAP OVER ADD           ; b (a + b)
+        OVER PUSH 55 LT         ; is the new a below 55?
+        JZ end
+        JMP loop
+end:    HALT

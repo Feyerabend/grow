@@ -1,0 +1,11 @@
+--- pcom.p
++++ pcom.p, mended
+@@ -366,7 +366,7 @@
+        end
+       else
+ 	begin writeln(output,'   *** eof ','encountered');
+-	  test := false
++	  test := false; ch := ' '; eol := true
+ 	end
+     end;
+ 

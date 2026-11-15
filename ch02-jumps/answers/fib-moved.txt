@@ -1,0 +1,12 @@
+; exercise 6: the Fibonacci program moved four places on, by PUSH 0 DROP
+; and PUSH 0 DROP put in front: with relative jumps, its numbers are the same
+        PUSH 0 DROP PUSH 0 DROP
+        PUSH 0 PUSH 1 PUSH 10
+loop:   DUP JZ end
+        PUSH 1 SUB
+        ROT ROT
+        OVER PRINT
+        SWAP OVER ADD
+        ROT
+        JMP loop
+end:    HALT

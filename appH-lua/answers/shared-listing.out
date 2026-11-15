@@ -1,0 +1,62 @@
+
+main <shared.lua:0,0> (13 instructions)
+0+ params, 5 slots, 1 upvalue, 3 locals, 1 constant, 1 function
+	1	[1]	VARARGPREP	0
+	2	[10]	CLOSURE  	0 0	
+	3	[12]	MOVE     	1 0
+	4	[12]	CALL     	1 1 3	; 0 in 2 out
+	5	[13]	MOVE     	3 1
+	6	[13]	CALL     	3 1 1	; 0 in 0 out
+	7	[14]	MOVE     	3 1
+	8	[14]	CALL     	3 1 1	; 0 in 0 out
+	9	[15]	GETTABUP 	3 0 0	; _ENV "print"
+	10	[15]	MOVE     	4 2
+	11	[15]	CALL     	4 1 0	; 0 in all out
+	12	[15]	CALL     	3 0 1	; all in 0 out
+	13	[15]	RETURN   	3 1 1	; 0 out
+constants (1):
+	0	S	"print"
+locals (3):
+	0	counter	3	14
+	1	inc	5	14
+	2	get	5	14
+upvalues (1):
+	0	_ENV	1	0
+
+function <shared.lua:5,10> (7 instructions)
+0 params, 5 slots, 0 upvalues, 3 locals, 0 constants, 2 functions
+	1	[6]	LOADI    	0 0
+	2	[7]	CLOSURE  	1 0	
+	3	[8]	CLOSURE  	2 1	
+	4	[9]	MOVE     	3 1
+	5	[9]	MOVE     	4 2
+	6	[9]	RETURN   	3 3 0k	; 2 out
+	7	[10]	RETURN   	3 1 0k	; 0 out
+constants (0):
+locals (3):
+	0	n	2	8
+	1	inc	3	8
+	2	get	4	8
+upvalues (0):
+
+function <shared.lua:7,7> (5 instructions)
+0 params, 2 slots, 1 upvalue, 0 locals, 0 constants, 0 functions
+	1	[7]	GETUPVAL 	0 0	; n
+	2	[7]	ADDI     	0 0 1
+	3	[7]	MMBINI   	0 1 6 0	; __add
+	4	[7]	SETUPVAL 	0 0	; n
+	5	[7]	RETURN0  	
+constants (0):
+locals (0):
+upvalues (1):
+	0	n	1	0
+
+function <shared.lua:8,8> (3 instructions)
+0 params, 2 slots, 1 upvalue, 0 locals, 0 constants, 0 functions
+	1	[8]	GETUPVAL 	0 0	; n
+	2	[8]	RETURN1  	0
+	3	[8]	RETURN0  	
+constants (0):
+locals (0):
+upvalues (1):
+	0	n	1	0

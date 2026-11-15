@@ -1,0 +1,1 @@
+trap: yield outside a coroutine at 2

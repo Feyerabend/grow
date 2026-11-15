@@ -1,0 +1,7 @@
+The P4 machine reads its input
+a character at a time,
+#  12 30 -2
+  with a window onto the next one.
+#100
+
+and blank lines count.

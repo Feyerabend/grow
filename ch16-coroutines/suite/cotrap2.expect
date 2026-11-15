@@ -1,0 +1,2 @@
+status 1
+trap: yield outside a coroutine at 2

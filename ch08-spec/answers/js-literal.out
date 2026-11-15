@@ -1,0 +1,6 @@
+            status 1
+            trap: ran off the end of the program at 3
+  got:      1
+            status 1
+            trap: ran off the end of the program at 2
+node answers/vm_literal.js: 39 of 40 passed

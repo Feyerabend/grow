@@ -1,0 +1,3 @@
+# Only a function can be made a coroutine: it is called at the first resume.
+let c = coroutine 5 in
+print (resume c 1)

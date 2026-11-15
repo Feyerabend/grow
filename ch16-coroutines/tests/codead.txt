@@ -1,0 +1,3 @@
+2
+1
+trap: coroutine cannot be resumed at 37

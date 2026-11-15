@@ -1,0 +1,3 @@
+dead.asm:4: warning: 'PUSH' can never be reached
+dead.asm:8: warning: 'PUSH' can never be reached
+1

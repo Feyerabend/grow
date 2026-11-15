@@ -1,0 +1,22 @@
+# Exercise 16.6, as a function called once for each character: Conway's
+# example, copying characters and turning each pair of asterisks (42) into
+# an up-arrow, here 94, '^'. The input is a**b***c*, as character codes, with
+# -1 to say that it has ended. The function keeps no state of its own: it is
+# given 0 or 1, whether an asterisk is waiting, and hands back the next.
+let input i =
+  if i = 0 then 97 else if i = 1 then 42 else if i = 2 then 42 else
+  if i = 3 then 98 else if i = 4 then 42 else if i = 5 then 42 else
+  if i = 6 then 42 else if i = 7 then 99 else if i = 8 then 42 else -1 in
+
+let step waiting c =
+  if waiting = 0 then
+    (if c = 42 then 1 else if c = -1 then 0 else (print c; 0))
+  else
+    (if c = 42 then (print 94; 0)
+     else if c = -1 then (print 42; 0)
+     else (print 42; print c; 0)) in
+
+let rec feed i waiting =
+  if i = 10 then 0 else feed (i + 1) (step waiting (input i)) in
+
+feed 0 0

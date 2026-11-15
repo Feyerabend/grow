@@ -1,0 +1,38 @@
+Bits.class: 1287 bytes, 1235 without its stack maps
+Bounds.class: 604 bytes, 570 without its stack maps
+Collatz.class: 898 bytes, 868 without its stack maps
+Deep.class: 501 bytes, 501 without its stack maps
+Divide.class: 617 bytes, 602 without its stack maps
+Fib.class: 588 bytes, 564 without its stack maps
+Negative.class: 472 bytes, 472 without its stack maps
+Null.class: 515 bytes, 506 without its stack maps
+Queens.class: 1001 bytes, 962 without its stack maps
+Sieve.class: 721 bytes, 686 without its stack maps
+Switch.class: 960 bytes, 905 without its stack maps
+Revisit.class: 497 bytes, 477 without its stack maps
+12 classes made old print as they did
+Sieve.<init>()V: 3 instructions, 3 visits
+Sieve.main([Ljava/lang/String;)V: 65 instructions, 65 visits
+Revisit.<init>()V: 3 instructions, 3 visits
+Revisit.main([Ljava/lang/String;)V: 30 instructions, 38 visits
+load-int-as-reference: refused
+int-as-array: refused
+store-int-as-reference: refused
+underflow: refused
+max-stack: refused
+max-locals: refused
+no-stackmap: accepted
+frame-says-top: accepted
+frame-says-null: accepted
+branch-without-frame: refused
+branch-into-instruction: refused
+return-without-value: refused
+falls-off-the-end: refused
+code-after-return: accepted
+constructor-without-super: refused
+wrong-field: refused
+wrong-argument: refused
+call-a-field: refused
+unsorted-keys: refused
+bad-magic: refused
+truncated: refused

@@ -1,0 +1,2 @@
+error: ambiguous operator type: '+' applied at unresolved type θ; add a type annotation so the operand type is concrete
+status 1

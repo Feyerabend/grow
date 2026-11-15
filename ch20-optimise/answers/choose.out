@@ -1,0 +1,26 @@
+the eight pairs chosen:   LOAD PUSH, LOAD LOAD, PUSH SUB, ADD STORE, STORE JMP, STORE LOAD, SUB STORE, LOAD JZ
+the eight triples chosen: LOAD PUSH SUB, LOAD LOAD PUSH, ADD STORE LOAD, STORE LOAD PUSH, PUSH SUB STORE, LOAD PUSH AND, SUB STORE JMP, PUSH AND ADD
+chapter
+  vm-auto: 71 of 71 passed
+  vm-auto -g copy -S: 71 of 71 passed
+  tests/super: checked
+pairs
+  vm-auto: 71 of 71 passed
+  vm-auto -g copy -S: 71 of 71 passed
+  tests/super: checked
+triples
+  vm-auto: 71 of 71 passed
+  vm-auto -g copy -S: 71 of 71 passed
+  tests/super: checked
+pairs-tri
+  vm-auto: 71 of 71 passed
+  vm-auto -g copy -S: 71 of 71 passed
+  tests/super: checked
+
+dispatched            none      by hand      chapter        pairs      triples    pairs-tri
+fib             26,925,370   18,847,760   18,847,760   21,540,297   16,155,224   18,847,761
+loop           260,000,007  200,000,007  200,000,007  160,000,006  140,000,007  120,000,006
+sieve           23,636,044   14,743,494   14,743,494   16,534,313   13,553,164   15,343,983
+closures        26,477,794   24,380,514   24,380,514   24,642,658   24,118,370   24,380,514
+enkel-sieve     56,905,612   41,765,809   41,765,809   56,905,612   41,765,809   56,905,612
+basal-loop      14,399,563   11,999,631   11,999,631   14,399,563   11,999,631   14,399,563

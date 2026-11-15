@@ -1,0 +1,39 @@
+taken out: a pop from a frame with too few values
+  p00001.vm: sanitizer: index -1 out of bounds for type 'struct value[256]'
+    20 instructions, 1 after 21 tries:
+        0  MUL
+  p00009.vm: sanitizer: index -1 out of bounds for type 'struct value[256]'
+    50 instructions, 1 after 51 tries:
+        0  OR
+  p00022.vm: sanitizer: index -1 out of bounds for type 'struct value[256]'
+    52 instructions, 1 after 55 tries:
+        0  SUB
+taken out: LOAD of a local the frame does not have
+  p00000.vm: sanitizer: index -1 out of bounds for type 'struct value[256]'
+    60 instructions, 2 after 62 tries:
+        0  LOAD 1
+        2  ROT
+  p00005.vm: verified and checked runs differ
+    41 instructions, 1 after 42 tries:
+        0  LOAD 2
+  p00019.vm: verified and checked runs differ
+    21 instructions, 1 after 22 tries:
+        0  LOAD 2
+taken out: STORE to a local the frame does not have
+  p00096.vm: sanitizer: index -1 out of bounds for type 'struct value[256]'
+    20 instructions, 6 after 34 tries:
+        0  PUSH 1
+        2  PUSH 2
+        4  STOREM
+        5  PUSH 100
+        7  STORE 4
+        9  DIV
+  p00127.vm: verified and checked runs differ
+    55 instructions, 2 after 57 tries:
+        0  PUSH 2
+        2  STORE 6
+  p00141.vm: sanitizer: index -1 out of bounds for type 'struct value[256]'
+    17 instructions, 3 after 20 tries:
+        0  PUSH 2
+        2  STORE 1
+        4  DIV

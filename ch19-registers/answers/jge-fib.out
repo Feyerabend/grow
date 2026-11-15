@@ -1,0 +1,15 @@
+S0:
+        MOVI r0, 30                 ; from 0
+        CALL S7, window r0, size 4  ; from 2
+        PRINT r0                    ; from 5
+        HALT                        ; from 6
+S7:
+        JGEI r0, 2, S17             ; from 11
+        RET r0                      ; from 16
+S17:
+        SUBI r1, r0, 1              ; from 21
+        CALL S7, window r1, size 4  ; from 22
+        SUBI r2, r0, 2              ; from 29
+        CALL S7, window r2, size 4  ; from 30
+        ADD r1, r1, r2              ; from 33
+        RET r1                      ; from 34

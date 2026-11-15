@@ -1,0 +1,7 @@
+500 expressions, seed 1: wrong one by one on the machine, runs, and as measure/mistakes.py works it out
+  + and - group to the right             27    2     27
+  * / % group to the right               80   49     80
+  all five operators at one level        76   15     76
+  + binds tighter than *                119   34    119
+  % at the level of + and -              62   28     62
+  minus takes the whole term after it     7    7      7

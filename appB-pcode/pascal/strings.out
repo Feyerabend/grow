@@ -1,0 +1,10 @@
+a = c
+a <> b
+p-code   < pascal  
+pascal   >= p-code  
+  abstract
+  compiler
+  machine 
+  portable
+  zurich  
+p- |

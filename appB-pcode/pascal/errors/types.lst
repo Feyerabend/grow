@@ -1,0 +1,7 @@
+
+     1        9 program types(output); 
+     2        9 var x: integer; 
+     3       10 begin 
+     4        3     x := 3 < 4 
+     5        6 end. 
+     5   ****     ^129

@@ -1,0 +1,9 @@
+; exercise 5: the same, with the test at the bottom of the loop
+        PUSH 10  CALL fibs 1  DROP  HALT
+fibs:   PUSH 0  PUSH 1                  ; n | a b
+loop:   OVER  PRINT
+        SWAP  OVER  ADD
+        LOAD 0  PUSH 1  SUB  DUP  STORE 0
+        JZ end
+        JMP loop
+end:    PUSH 0  RET

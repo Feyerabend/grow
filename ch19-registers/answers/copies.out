@@ -1,0 +1,19 @@
+fib, stage one: 20 instructions, 4 MOV, 4 MOVI
+fib, stage two: 13 instructions, 0 MOV, 1 MOVI
+
+fib.vm                           none
+loop.vm                          none
+sieve.vm                         call 1
+basal-countdown.vm               join 1
+basal-extremes.vm                join 1
+basal-hurkle.vm                  join 1
+basal-table.vm                   join 1
+enkel-bits.vm                    swap 1
+enkel-bubble-sort.vm             call 2, other 2, swap 1
+enkel-gcd-negative-num.vm        call 4, swap 2
+enkel-hanoi.vm                   call 8, swap 1
+enkel-recursive-factorial.vm     call 1
+enkel-sieve.vm                   none
+heap-lists.vm                    call 5, join 2, other 1
+heap-strings.vm                  call 3
+all                              call 24, join 6, other 3, swap 5

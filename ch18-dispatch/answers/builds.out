@@ -1,0 +1,18 @@
+vm-subroutine -g mark: 71 of 71 passed
+vm-subroutine -g copy -S: 71 of 71 passed
+vm-subroutine fib: right
+vm-subroutine loop: right
+vm-subroutine sieve: right
+vm-subroutine closures: right
+vm-spread -g mark: 71 of 71 passed
+vm-spread -g copy -S: 71 of 71 passed
+vm-spread fib: right
+vm-spread loop: right
+vm-spread sieve: right
+vm-spread closures: right
+vm-indirect -g mark: 71 of 71 passed
+vm-indirect -g copy -S: 71 of 71 passed
+vm-indirect fib: right
+vm-indirect loop: right
+vm-indirect sieve: right
+vm-indirect closures: right

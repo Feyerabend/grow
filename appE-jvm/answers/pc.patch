@@ -1,0 +1,125 @@
+--- run.c	2026-11-15 00:30:07
++++ run.c	2026-11-15 00:30:07
+@@ -199,13 +199,14 @@
+     int base = depth;
+     calls[depth++] = (Call){ m, pc, locals, sp };
+ 
++/* Where the call is, for a trace: stored only where something can throw. */
++#define AT() (calls[depth - 1].pc = pc)
+ #define PUSH(v) (*sp++ = (Value)(v))
+ #define POP() (*--sp)
+ #define I(v) ((int32_t)(v))
+ #define BRANCH(cond) do { if (cond) { pc += s2(pc + 1); goto next; } pc += 3; goto next; } while (0)
+     for (;;) {
+     next:
+-        calls[depth - 1].pc = pc;       /* for a trace, if this throws */
+         switch (*pc) {
+         case 0: pc++; break;                                    /* nop */
+         case 1: PUSH(0); pc++; break;                           /* aconst_null */
+@@ -218,6 +219,7 @@
+             if (cls->pool[i].tag == CP_INTEGER)
+                 PUSH(cls->pool[i].value);
+             else {
++                AT();
+                 resolve(i);
+                 PUSH(cls->resolved[i]);
+             }
+@@ -229,6 +231,7 @@
+         case 42: case 43: case 44: case 45: PUSH(locals[*pc - 42]); pc++; break;
+         case 46:                                                /* iaload */
+             b = POP(); a = POP();
++            AT();
+             PUSH(element(a, I(b))->data[I(b)]);
+             pc++;
+             break;
+@@ -238,6 +241,7 @@
+         case 79: {                                              /* iastore */
+             Value v = POP();
+             b = POP(); a = POP();
++            AT();
+             element(a, I(b))->data[I(b)] = I(v);
+             pc++;
+             break;
+@@ -275,7 +279,7 @@
+         case 108: case 112:                         /* idiv, irem */
+             b = POP(); a = POP();
+             if (I(b) == 0)
+-                throw("ArithmeticException", "/ by zero");
++                AT(), throw("ArithmeticException", "/ by zero");
+             /* the one overflow: MIN_VALUE / -1 is MIN_VALUE */
+             if (I(b) == -1)
+                 PUSH(*pc == 108 ? (int32_t)(0u - (uint32_t)a) : 0);
+@@ -352,6 +356,7 @@
+         }
+         case 178: {                                             /* getstatic */
+             int i = u2(pc + 1);
++            AT();
+             if (resolve(i) == SYSTEM_OUT)
+                 PUSH(&system_out);
+             else
+@@ -360,6 +365,7 @@
+             break;
+         }
+         case 179:                                               /* putstatic */
++            AT();
+             if (resolve(u2(pc + 1)) == SYSTEM_OUT)
+                 link_error("IllegalAccessError", "java/lang/System", "out");
+             ((Field *)cls->resolved[u2(pc + 1)])->value = POP();
+@@ -367,32 +373,36 @@
+             break;
+         case 182: {                                             /* invokevirtual */
+             int i = u2(pc + 1);
++            AT();
+             resolve(i);
+             int which = printer[i];
+             int takes = !(which == PRINTLN || which == FLUSH);
+             Value v = takes ? POP() : 0;
+             if (POP() != (Value)&system_out)
+-                throw("NullPointerException", NULL);
++                AT(), throw("NullPointerException", NULL);
+             print(which, v);
+             pc += 3;
+             break;
+         }
+         case 183:                                               /* invokespecial */
++            AT();
+             resolve(u2(pc + 1));        /* Object's <init>: nothing to do */
+             sp--;
+             pc += 3;
+             break;
+         case 184: {                                             /* invokestatic */
+             int i = u2(pc + 1);
+-            if (kind[i] != METHOD)
++            if (kind[i] != METHOD) {
++                AT();
+                 resolve(i);
++            }
+             Method *callee = cls->resolved[i];
+             if (!callee->code)
+-                link_error("UnsatisfiedLinkError", cls->name, callee->name);
++                AT(), link_error("UnsatisfiedLinkError", cls->name, callee->name);
+             Value *args = sp - callee->nargs;
+             if (depth == MAX_FRAMES ||
+                 args + callee->max_locals + callee->max_stack > stack + STACK_VALUES)
+-                throw("StackOverflowError", NULL);
++                AT(), throw("StackOverflowError", NULL);
+             calls[depth - 1].pc = pc;
+             calls[depth - 1].sp = args;
+             m = callee;
+@@ -403,6 +413,7 @@
+             break;
+         }
+         case 188: {                                             /* newarray, of int */
++            AT();
+             Array *arr = new_array(I(POP()));
+             PUSH(arr);
+             pc += 2;
+@@ -411,7 +422,7 @@
+         case 190:                                               /* arraylength */
+             a = POP();
+             if (!a)
+-                throw("NullPointerException", NULL);
++                AT(), throw("NullPointerException", NULL);
+             PUSH(((Array *)a)->length);
+             pc++;
+             break;

@@ -1,0 +1,77 @@
+--- p4.c
++++ p4.c, with a display
+@@ -305,16 +305,26 @@
+ }
+ 
+ /* The frame l static links out from this one: the frame of the
+- * procedure l levels out from this one, in the text. */
+-static long links;               /* static links followed, for -s */
++ * procedure l levels out from this one, in the text. With a display
++ * it is one step, however far out: display[k] is the frame in use at
++ * level k now. The level of the frame running is cur; each frame's
++ * level, and the entry of the display it hid, are kept beside the
++ * store, by the frame's address, since the mark has no room for them. */
++static long links;               /* static links not followed, for -s */
++static long display_writes;      /* what keeping the display cost */
++
++enum { LEVELS = 64 };
++static int32_t display[LEVELS];
++static int cur;
++static unsigned char level_of[MAXSTK + 1];
++static int32_t hidden[MAXSTK + 1];
+ 
+ static int32_t base(int l)
+ {
+-    int32_t a = mp;
++    if (l > cur)
++        trap(" no such level");
+     links += l;
+-    while (l-- > 0)
+-        a = store[at(a + 1)].i;
+-    return a;
++    return display[cur - l];
+ }
+ 
+ /* Integer arithmetic wraps at 32 bits, as Free Pascal's does. */
+@@ -595,6 +605,9 @@
+         if (sp + 5 > MAXSTK)
+             trap(" store overflow");
+         set_word(sp + 2, integer(base(p)));
++        if (cur - p + 1 >= LEVELS)
++            trap(" too many levels");
++        level_of[sp + 1] = (unsigned char)(cur - p + 1);
+         set_word(sp + 3, integer(mp));
+         set_word(sp + 4, integer(ep));
+         sp += 5;
+@@ -603,6 +616,10 @@
+         mp = sp - (p + 4);
+         set_word(mp + 4, integer(pc));
+         pc = q;
++        cur = level_of[mp];
++        hidden[mp] = display[cur];
++        display[cur] = mp;
++        display_writes++;
+         break;
+     case ENT:
+         if (p == 1) {
+@@ -622,7 +639,10 @@
+         sp = p == 0 ? mp - 1 : mp;
+         pc = store[at(mp + 4)].i;
+         ep = store[at(mp + 3)].i;
++        display[cur] = hidden[mp];
++        display_writes++;
+         mp = store[at(mp + 2)].i;
++        cur = level_of[mp];
+         break;
+     }
+ }
+@@ -1163,7 +1183,8 @@
+         total += counts[i];
+     }
+     qsort(order, 256, sizeof order[0], by_count);
+-    fprintf(stderr, "%12ld instructions\n%12ld static links followed\n", total, links);
++    fprintf(stderr, "%12ld instructions\n%12ld static links not followed\n"
++            "%12ld entries of the display written\n", total, links, display_writes);
+     for (int k = 0; k < 256 && counts[order[k]]; k++) {
+         int i = order[k];
+         fprintf(stderr, "%12ld %5.1f%%  %s\n", counts[i], 100.0 * counts[i] / total,

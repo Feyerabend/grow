@@ -1,0 +1,18 @@
+10.5: computed indexes checked, instructions run
+sample                  unchecked      ten      six
+bubble-sort                  2263     4403     3547
+fibonacci-dynamic             725     1295     1067
+insert-sort                  1888     3588     2908
+sieve                        9141    13551    11787
+all thirteen               129602   138422   134894   checks add 6.8% and 4.1%
+
+10.6: with GT, NE, LE and GE, instructions run
+sample                   before    after   fewer
+bits                        417      409    1.9%
+bubble-sort                2263     2209    2.4%
+fibonacci-dynamic           725      680    6.2%
+gcd-negative-num            147      143    2.7%
+gcd                          66       58   12.1%
+hanoi                       802      771    3.9%
+prime                    110094    94650   14.0%
+all thirteen             129602   114008   12.0%

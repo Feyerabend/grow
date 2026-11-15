@@ -1,0 +1,2 @@
+# Not in a coroutine, there is no one to yield to.
+print (yield 1)

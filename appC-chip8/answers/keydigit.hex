@@ -1,0 +1,14 @@
+; Exercise 1: draw the digit in V0 at the top left, wait for a key, and
+; draw that key's digit beside it. V0 is set here, to 5, for the run;
+; the program proper is the nine instructions from 202, 18 bytes.
+
+6005    ; 200  V0 := 5              the digit given
+6100    ; 202  V1 := 0              x
+6200    ; 204  V2 := 0              y
+F029    ; 206  I := the picture of digit V0
+D125    ; 208  draw it: 5 rows at V1, V2
+F30A    ; 20A  V3 := the next key, waiting for it
+6105    ; 20C  V1 := 5              beside the first
+F329    ; 20E  I := the picture of digit V3
+D125    ; 210  draw it
+1212    ; 212  the end

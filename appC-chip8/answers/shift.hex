@@ -1,0 +1,12 @@
+; Exercise 4: 8XY6 shifts VY on the VIP, and VX on CHIP-48. With V2 = 3
+; and VB = 6, VB becomes 3 >> 1 = 1 on the VIP, and 6 >> 1 = 3 on
+; CHIP-48; the digit is drawn.
+
+6B06    ; 200  VB := 6
+6203    ; 202  V2 := 3
+8B26    ; 204  VB := shifted right
+6305    ; 206  V3 := 5              x
+640C    ; 208  V4 := 12             y
+FB29    ; 20A  digit VB
+D345    ; 20C
+120E    ; 20E  the end

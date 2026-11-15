@@ -1,0 +1,21 @@
+1800 programs from each generator; how many fail
+                                                                      fuzz.py  fuzz_more
+the verifier as it is                                                       0          0
+taken out: a function called with different numbers of arguments            0         14
+
+a jump into the middle of an instruction, taken out of the verifier, and middle.asm:
+  as the verifier is           refused   verified and checked runs the same
+  as mutants.py takes it out   verified  sanitizer: index -1 out of bounds for type 'struct value[256]'
+  with the test deleted        refused   verified and checked runs the same
+more values than the stack has room for, taken out of the verifier, and room-full.asm:
+  as the verifier is           refused   verified and checked runs the same
+  as mutants.py takes it out   verified  sanitizer: index -1 out of bounds for type 'struct value[256]'
+  with the test deleted        refused   verified and checked runs the same
+code shared by two functions, taken out of the verifier, and shared.asm:
+  as the verifier is           refused   verified and checked runs the same
+  as mutants.py takes it out   verified  verified and checked runs the same
+  with the test deleted        verified  verified and checked runs the same
+code shared by two functions, taken out of the verifier, and shared-ret.asm:
+  as the verifier is           refused   verified and checked runs the same
+  as mutants.py takes it out   refused   verified and checked runs the same
+  with the test deleted        refused   verified and checked runs the same

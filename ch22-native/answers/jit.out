@@ -1,0 +1,17 @@
+vm-jit: 71 of 71 passed
+vm-jit -g copy -S: 71 of 71 passed
+vm-jit8: 71 of 71 passed
+vm-jit8 -g copy -S: 71 of 71 passed
+fib          vm-jit   jit: 10 instructions in 6 runs, 160 words of machine code
+fib          vm-jit8  jit: 12 instructions in 6 runs, 192 words of machine code
+loop         vm-jit   jit: 14 instructions in 3 runs, 180 words of machine code
+loop         vm-jit8  jit: 16 instructions in 1 runs, 194 words of machine code
+sieve        vm-jit   jit: 45 instructions in 12 runs, 581 words of machine code
+sieve        vm-jit8  jit: 46 instructions in 11 runs, 592 words of machine code
+closures     vm-jit   jit: 0 instructions in 0 runs, 0 words of machine code
+closures     vm-jit8  jit: 0 instructions in 0 runs, 0 words of machine code
+enkel-sieve  vm-jit   jit: 65 instructions in 35 runs, 1006 words of machine code
+enkel-sieve  vm-jit8  jit: 65 instructions in 35 runs, 1006 words of machine code
+basal-loop   vm-jit   jit: 31 instructions in 21 runs, 506 words of machine code
+basal-loop   vm-jit8  jit: 32 instructions in 21 runs, 522 words of machine code
+random programs: 2042 runs compared, 0 differ, 358 left out as too long

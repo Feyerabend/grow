@@ -1,0 +1,3 @@
+turns of 5, with the check       prints -1
+no limit on turns                prints 0
+turns of 5, without the check    still waiting after two seconds

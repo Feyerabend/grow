@@ -1,0 +1,14 @@
+# Exercise 17.5: a scheduler in lambda/0, for threads that give up their turn
+# themselves. Two workers, as in roundrobin.asm of chapter 16's answers:
+# worker k prints 10k + 1 to 10k + k, yielding after each. The scheduler runs
+# them in turn, and when one is finished, runs the other alone.
+let rec count k j =
+  if j > k then 0 else (print (10 * k + j); yield 0; count k (j + 1)) in
+let worker k = coroutine (fun ignored -> count k 1) in
+
+let rec alone t =
+  if finished t then 0 else (resume t 0; alone t) in
+let rec turns a b =
+  if finished a then alone b else (resume a 0; turns b a) in
+
+turns (worker 2) (worker 3)

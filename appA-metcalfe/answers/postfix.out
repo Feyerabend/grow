@@ -1,0 +1,6 @@
+A+B*C  =>  flag true; ABC*+
+A*B+C  =>  flag true; AB*C+
+(A+B)*C  =>  flag true; AB+C*
+A-B-C  =>  flag true; AB-C-
+A/(B-C)*D  =>  flag true; ABC-/D*
+A+  =>  flag false, stopped at symbol 1 of 2

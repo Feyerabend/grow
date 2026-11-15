@@ -1,0 +1,379 @@
+--- emit.py
++++ emit.py, frames
+@@ -102,74 +102,111 @@
+     return body
+ 
+ 
+-def where(name, scope):
+-    """The depth of name in scope (innermost first), or -1 for top level."""
+-    for depth, n in enumerate(scope):
++class Frame:
++    """The variables of one call: a slot for each name it binds, in the
++    order bound, a new one for each binding, so that no slot is used
++    twice in one call. depth is how many functions out it is."""
++    def __init__(self, depth):
++        self.depth = depth
++        self.names = []
++
++    def slot(self, name):
++        self.names.append(name)
++        return len(self.names) - 1
++
++
++def framed(frame, body):
++    return "(frame (" + " ".join(quote(n) for n in frame.names) + f") {body})"
++
++
++def where(name, scope, frame):
++    """How many frames out name is, and its slot there; or -1 -1 for a
++    top-level name. scope holds (name, frame depth, slot), innermost first."""
++    for n, depth, slot in scope:
+         if n == name:
+-            return depth
+-    return -1
++            return f"{frame.depth - depth} {slot}"
++    return "-1 -1"
+ 
+ 
+-def expr(e, scope):
++def expr(e, scope, frame):
++    def x(e):
++        return expr(e, scope, frame)
+     if isinstance(e, TLit):
+         return literal(e.value)
+     if isinstance(e, TVar):
+-        return f"(var {quote(e.name)} {where(e.name, scope)})"
++        return f"(var {quote(e.name)} {where(e.name, scope, frame)})"
+     if isinstance(e, TCon):
+-        return f"(con {quote(e.name)} {where(e.name, scope)})"
++        return f"(con {quote(e.name)} {where(e.name, scope, frame)})"
+     if isinstance(e, TTupleExpr):
+-        return "(tuple" + "".join(" " + expr(x, scope) for x in e.elems) + ")"
++        return "(tuple" + "".join(" " + x(a) for a in e.elems) + ")"
+     if isinstance(e, TApply):
+-        return f"(apply {expr(e.fn, scope)}" + "".join(" " + expr(a, scope) for a in e.args) + ")"
++        return f"(apply {x(e.fn)}" + "".join(" " + x(a) for a in e.args) + ")"
+     if isinstance(e, TBinOp):
+-        return f"(binop {quote(e.op)} {expr(e.left, scope)} {expr(e.right, scope)})"
++        return f"(binop {quote(e.op)} {x(e.left)} {x(e.right)})"
+     if isinstance(e, TUnaryOp):
+-        return f"(unary {quote(e.op)} {expr(e.operand, scope)})"
++        return f"(unary {quote(e.op)} {x(e.operand)})"
+     if isinstance(e, TLetExpr):
+-        return (f"(let {quote(e.name)} {expr(e.value, scope)} "
+-                f"{expr(e.body, [e.name] + scope)})")
++        value = x(e.value)
++        slot = frame.slot(e.name)
++        body = expr(e.body, [(e.name, frame.depth, slot)] + scope, frame)
++        return f"(let {quote(e.name)} {slot} {value} {body})"
+     if isinstance(e, TIfExpr):
+-        return f"(if {expr(e.cond, scope)} {expr(e.then_, scope)} {expr(e.else_, scope)})"
++        return f"(if {x(e.cond)} {x(e.then_)} {x(e.else_)})"
+     if isinstance(e, TMatchExpr):
+         arms = ""
+         for p, b in e.arms:
+             bound = []
+-            text = pattern(p, bound)
+-            arms += f" (arm {text} {expr(b, list(reversed(bound)) + scope)})"
+-        return f"(match {expr(e.scrutinee, scope)}{arms})"
++            text = pattern(p, bound, frame)
++            inner = [(n, frame.depth, s) for n, s in reversed(bound)]
++            arms += f" (arm {text} {expr(b, inner + scope, frame)})"
++        return f"(match {x(e.scrutinee)}{arms})"
+     if isinstance(e, TLambda):
+         param = e.params[0][0]
+         body = lambdas(e.params[1:], e.body)
+-        return f"(lambda {quote(param)} {expr(body, [param] + scope)})"
++        own = Frame(frame.depth + 1)
++        own.slot(param)
++        text = expr(body, [(param, own.depth, 0)] + scope, own)
++        return f"(lambda {quote(param)} {framed(own, text)})"
+     raise TypeError(f"expr: {type(e).__name__}")
+ 
+ 
+-def pattern(p, bound):
+-    """A pattern; the names it binds are added to bound, in binding order."""
++def pattern(p, bound, frame):
++    """A pattern; the names it binds, with their slots, are added to
++    bound, in binding order."""
+     if isinstance(p, TPWild):
+         return "(wild)"
+     if isinstance(p, TPVar):
+-        bound.append(p.name)
+-        return f"(pvar {quote(p.name)})"
++        slot = frame.slot(p.name)
++        bound.append((p.name, slot))
++        return f"(pvar {quote(p.name)} {slot})"
+     if isinstance(p, TPLit):
+         return f"(plit {literal(p.value)})"
+     if isinstance(p, TPCon):
+-        return f"(pcon {quote(p.name)}" + "".join(" " + pattern(a, bound) for a in p.args) + ")"
++        return f"(pcon {quote(p.name)}" + "".join(" " + pattern(a, bound, frame) for a in p.args) + ")"
+     if isinstance(p, TPTuple):
+-        return "(ptuple" + "".join(" " + pattern(x, bound) for x in p.elems) + ")"
++        return "(ptuple" + "".join(" " + pattern(x, bound, frame) for x in p.elems) + ")"
+     raise TypeError(f"pattern: {type(p).__name__}")
+ 
+ 
++def function(name, params, body):
++    """A function's body, in its frame: its parameter in slot 0 and its
++    own name in slot 1, as the machine binds them."""
++    frame = Frame(0)
++    frame.slot(params[0][0])
++    frame.slot(name)
++    scope = [(name, 0, 1), (params[0][0], 0, 0)]
++    return framed(frame, expr(lambdas(params[1:], body), scope, frame))
++
++
+ def decl(d):
+     """A declaration, or None for one with nothing to run (an alias)."""
+     if isinstance(d, TFnDecl):
+         if not d.params:
+             raise ValueError(f"function {d.name!r} has no parameters")
+-        param = d.params[0][0]
+-        body = expr(lambdas(d.params[1:], d.body), [d.name, param])
+-        return f"(fn {quote(d.name)} {quote(param)} {body})"
++        return f"(fn {quote(d.name)} {quote(d.params[0][0])} {function(d.name, d.params, d.body)})"
+     if isinstance(d, TLetDecl):
+-        return f"(let {quote(d.name)} {expr(d.value, [])})"
++        frame = Frame(0)
++        return f"(let {quote(d.name)} {framed(frame, expr(d.value, [], frame))})"
+     if isinstance(d, TTypeDecl):
+         if not d.variants:
+             return None
+@@ -180,8 +217,7 @@
+         if not methods:
+             return None
+         return f"(impl {quote(d.for_type)} {quote(d.trait_name)}" + "".join(
+-            f" ({quote(m.name)} {quote(m.params[0][0])} "
+-            f"{expr(lambdas(m.params[1:], m.body), [m.name, m.params[0][0]])})"
++            f" ({quote(m.name)} {quote(m.params[0][0])} {function(m.name, m.params, m.body)})"
+             for m in methods) + ")"
+     raise TypeError(f"decl: {type(d).__name__}")
+ 
+--- cek.h
++++ cek.h, frames
+@@ -81,6 +81,7 @@
+     EXPR_IF,
+     EXPR_MATCH,
+     EXPR_LAMBDA, /* always single-param; multi-param fns are nested lambdas */
++    EXPR_FRAME,  /* a function's body, with the names of its slots */
+ } ExprKind;
+ 
+ struct LkExpr {
+@@ -89,6 +90,9 @@
+      * reach the name, or -1 for a top-level name; and, for one of those,
+      * its slot in the top-level table once it has been found, else -1. */
+     int depth, slot;
++    /* EXPR_VAR and EXPR_CON: with frames, depth counts frames, and index
++     * is the slot in that frame. EXPR_LET: the slot it binds. */
++    int index;
+     union {
+         LkLit             lit;
+ 
+@@ -140,6 +144,12 @@
+             const char*   param;
+             const LkExpr* body;
+         } lam;
++
++        struct {                                   /* EXPR_FRAME */
++            const char* const* names;  /* a function's variables, by slot */
++            int                n;
++            const LkExpr*      body;
++        } frame;
+     };
+ };
+ 
+@@ -150,6 +160,7 @@
+ 
+ struct LkPat {
+     PatKind kind;
++    int     slot;                                /* PAT_VAR */
+     union {
+         const char* var;                         /* PAT_VAR */
+ 
+@@ -292,10 +303,11 @@
+  * Top-level names are kept separately (see cek.c) and checked after the
+  * local chain, avoiding the need to backpatch closure envs.
+  */
+-struct LkEnv {
+-    const char* name;
+-    LkVal       val;
+-    LkEnv*      next;
++struct LkEnv {          /* a call's frame: its variables, by slot */
++    LkEnv*             next;   /* the frame of the function around it */
++    const char* const* names;
++    int                n;
++    LkVal              vals[];
+ };
+ 
+ 
+@@ -330,6 +342,7 @@
+ 
+         struct {
+             const char*   name;
++            int           slot;
+             const LkExpr* body;
+         } let;
+ 
+--- tree.c
++++ tree.c, frames
+@@ -198,6 +198,7 @@
+         e->kind = kind[0] == 'v' ? EXPR_VAR : EXPR_CON;
+         e->name = string();
+         e->depth = (int)number();
++        e->index = (int)number();
+         e->slot = -1;
+     } else if (!strcmp(kind, "tuple")) {
+         e->kind = EXPR_TUPLE;
+@@ -222,6 +223,7 @@
+     } else if (!strcmp(kind, "let")) {
+         e->kind = EXPR_LET;
+         e->let.name = string();
++        e->index = (int)number();
+         e->let.val = expr();
+         e->let.body = expr();
+     } else if (!strcmp(kind, "if")) {
+@@ -233,6 +235,20 @@
+         e->kind = EXPR_LAMBDA;
+         e->lam.param = string();
+         e->lam.body = expr();
++    } else if (!strcmp(kind, "frame")) {
++        e->kind = EXPR_FRAME;
++        open_();
++        int cap = 4, n = 0;
++        const char **names = room(sizeof *names * (size_t)cap);
++        while (!closing()) {
++            if (n == cap)
++                names = realloc(names, sizeof *names * (size_t)(cap *= 2));
++            names[n++] = string();
++        }
++        close_();
++        e->frame.names = names;
++        e->frame.n = n;
++        e->frame.body = expr();
+     } else if (!strcmp(kind, "match")) {
+         e->kind = EXPR_MATCH;
+         e->match.scrutinee = expr();
+@@ -268,6 +284,7 @@
+     else if (!strcmp(kind, "pvar")) {
+         p->kind = PAT_VAR;
+         p->var = string();
++        p->slot = (int)number();
+     } else if (!strcmp(kind, "plit")) {
+         p->kind = PAT_LIT;
+         open_();
+--- cek.c
++++ cek.c, frames
+@@ -124,12 +124,17 @@
+ 
+ /* -- Local environment -- */
+ 
+-static LkEnv* env_bind(LkEnv* env, const char* name, LkVal val) {
+-    LkEnv* node  = AR(OBJ_ENV, sizeof(LkEnv));
+-    node->name   = name;
+-    node->val    = val;
+-    node->next   = env;
+-    return node;
++/* A new frame for a call of a function whose body is f, inside the frame
++ * next. Its slots start as unit, so that the collector never follows a
++ * stray pointer in one not yet bound. */
++static LkEnv* frame_new(LkEnv* next, const LkExpr* f) {
++    LkEnv* fr = AR(OBJ_ENV, sizeof(LkEnv) + (size_t)f->frame.n * sizeof(LkVal));
++    fr->next  = next;
++    fr->names = f->frame.names;
++    fr->n     = f->frame.n;
++    for (int i = 0; i < fr->n; i++)
++        fr->vals[i] = (LkVal){ .kind = V_UNIT };
++    return fr;
+ }
+ 
+ /* A variable, by position: depth cells out from env, or, if
+@@ -144,19 +149,19 @@
+         LkEnv* n = env;
+         for (int d = e->depth; d > 0 && n; d--)
+             n = n->next;
+-        if (!n) {
++        if (!n || e->index >= n->n) {
+             fprintf(stderr, "lark: no variable %s at depth %d\n",
+                     e->name, e->depth);
+             exit(1);
+         }
+ #ifdef LARK_CHECK_DEPTH
+-        if (strcmp(n->name, e->name) != 0) {
+-            fprintf(stderr, "lark: %s at depth %d is %s\n",
+-                    e->name, e->depth, n->name);
++        if (strcmp(n->names[e->index], e->name) != 0) {
++            fprintf(stderr, "lark: %s at depth %d, slot %d, is %s\n",
++                    e->name, e->depth, e->index, n->names[e->index]);
+             exit(3);
+         }
+ #endif
+-        return n->val;
++        return n->vals[e->index];
+     }
+     if (e->slot < 0) {
+         int slot = top_index(e->name);
+@@ -486,7 +491,7 @@
+             return 1;
+ 
+         case PAT_VAR:
+-            *env_out = env_bind(*env_out, pat->var, val);
++            (*env_out)->vals[pat->slot] = val;
+             return 1;
+ 
+         case PAT_LIT:
+@@ -721,7 +726,7 @@
+         switch ((ObjKind)h->kind) {
+             case OBJ_ENV: {
+                 LkEnv* e = o;
+-                move_val(&e->val);
++                move_vals(e->vals, e->n);
+                 e->next = move(e->next);
+                 break;
+             }
+@@ -784,10 +789,11 @@
+     switch (fn.kind) {
+         case V_CLOSURE: {
+             LkClosure* c  = fn.clos;
+-            LkEnv*     e  = env_bind(c->env, c->param, arg);
+-            if (c->rec) e = env_bind(e, c->rec, fn);
++            LkEnv*     e  = frame_new(c->env, c->body);
++            e->vals[0] = arg;
++            if (c->rec) e->vals[1] = fn;
+             _mode = MODE_EVAL;
+-            _expr = c->body;
++            _expr = c->body->frame.body;
+             _env  = e;
+             return 0;
+         }
+@@ -931,7 +937,8 @@
+                 case EXPR_LET:
+                     kont_push((LkFrame){
+                         .kind = FRAME_LET, .env = env,
+-                        .let  = { .name = e->let.name, .body = e->let.body }
++                        .let  = { .name = e->let.name, .slot = e->index,
++                                  .body = e->let.body }
+                     });
+                     _expr = e->let.val;
+                     break;
+@@ -1039,7 +1046,8 @@
+                 case FRAME_LET:
+                     _mode = MODE_EVAL;
+                     _expr = fr.let.body;
+-                    _env  = env_bind(fr.env, fr.let.name, val);
++                    fr.env->vals[fr.let.slot] = val;
++                    _env  = fr.env;
+                     break;
+ 
+                 case FRAME_IF:
+@@ -1143,7 +1151,8 @@
+                 break;
+ 
+             case DECL_LET:
+-                _mode = MODE_EVAL; _expr = d->let_val; _env = NULL;
++                _mode = MODE_EVAL; _expr = d->let_val->frame.body;
++                _env = frame_new(NULL, d->let_val);
+                 top_set(d->name, cek_run_until(0));
+                 break;
+ 

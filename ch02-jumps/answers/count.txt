@@ -1,0 +1,8 @@
+; exercise 1: the numbers from 1 to 10
+        PUSH 1                  ; i
+loop:   DUP PRINT
+        PUSH 1 ADD              ; i + 1
+        DUP PUSH 11 LT          ; i < 11 ?
+        JZ end
+        JMP loop
+end:    HALT

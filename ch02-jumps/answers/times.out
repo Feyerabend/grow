@@ -1,0 +1,9 @@
+printed: 42
+words: 20
+code: PUSH 0 PUSH 6 DUP JZ 17 PUSH 1 SUB SWAP PUSH 7 ADD SWAP JMP 4 DROP PRINT HALT
+work         27
+jumps        13
+juggling     20
+comparing     0
+stopping      1
+all          61

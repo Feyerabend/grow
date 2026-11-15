@@ -1,0 +1,24 @@
+;
+  before 1:1: expected '(' or '-' or 'end' or a number, found ';'
+  after  1:1: expected 'end' or an expression, found ';'
+1 + ;
+  before 1:5: expected '(' or '-' or a number, found ';'
+  after  1:5: expected an operand, found ';'
+(;
+  before 1:2: expected '(' or '-' or a number, found ';'
+  after  1:2: expected an expression, found ';'
+1 < ;
+  before 1:5: expected '(' or '-' or a number, found ';'
+  after  1:5: expected an operand, found ';'
+1 2;
+  before 1:3: expected '%' or '*' or '+' or '-' or '/' or ';' or '<' or '=', found '2'
+  after  1:3: expected ';' or an operator, found '2'
+(1 + 2;
+  before 1:7: expected '%' or ')' or '*' or '+' or '-' or '/' or '<' or '=', found ';'
+  after  1:7: expected ')' or an operator, found ';'
+- ;
+  before 1:3: expected '(' or '-' or a number, found ';'
+  after  1:3: expected '(' or '-' or a number, found ';'
+1 * (2 + );
+  before 1:10: expected '(' or '-' or a number, found ')'
+  after  1:10: expected an operand, found ')'

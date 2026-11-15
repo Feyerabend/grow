@@ -1,0 +1,6 @@
+dir.vm: too short to be a program
+status 2
+dir.vm: cannot open
+status 2
+dir.vm: cannot open
+status 2

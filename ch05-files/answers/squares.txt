@@ -1,0 +1,11 @@
+# Exercise 5.1: the squares of 1 to 10. main keeps i as local 0.
+
+PUSH 1              #  0  i = 1
+LOAD 0 PUSH 11 LT   #  2  loop: i < 11 ?
+JZ 24               #  7  no: stop
+LOAD 0 LOAD 0 MUL   #  9  i * i
+PRINT               # 14
+LOAD 0 PUSH 1 ADD   # 15  i + 1
+STORE 0             # 20  i = i + 1
+JMP 2               # 22
+HALT                # 24  end

@@ -1,0 +1,24 @@
+#!/bin/sh
+# Exercise 22.4: compile a program for the machine to C with vm2c.py, the C
+# to WebAssembly with Clang, and run it under Node.js: the three tested
+# together as one machine, as vmc does for native code.
+#
+#     vmw [-g mark | -g copy] [-S] program.vm
+
+dir=$(cd "$(dirname "$0")" && pwd)
+chapter=$(cd "$dir/../.." && pwd)
+for last; do :; done
+work=$(mktemp -d)
+trap 'rm -rf "$work"' EXIT
+python3 "$chapter/vm2c.py" "$last" > "$work/p.c" || exit $?
+${CLANG:-clang} --target=wasm32 -ffreestanding -nostdlib -O2 -w \
+    -isystem "$dir/include" -I"$chapter" -Wl,--no-entry \
+    -o "$work/p.wasm" "$work/p.c" "$dir/libc.c" || exit 4
+n=$#
+i=1
+for arg; do
+    if [ $i -lt $n ]; then set -- "$@" "$arg"; fi
+    i=$((i + 1))
+done
+shift $n
+node "$dir/run.mjs" "$@" "$work/p.wasm"

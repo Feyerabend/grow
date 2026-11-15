@@ -1,0 +1,3 @@
+vm.c       prints ['4096']; trap: out of memory at 27
+the mutant prints nothing; trap: out of memory at 11
+vm.py      prints ['4096']; trap: out of memory at 27

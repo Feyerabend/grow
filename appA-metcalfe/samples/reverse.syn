@@ -1,0 +1,30 @@
+; Reversing a string of letters, Metcalfe's first use of the editor:
+;
+;   <string> ::= <letter> K  J{ <letter> K X C }
+;
+; K is COPY, the integral sign J is "any number of times". For PQRS the
+; output tape holds P Q X C R X C S X C, and the editor's stack ends as
+; SRQP. Then EDIT W writes it.
+
+        CALL    STRING
+        EDIT    W
+        STOP
+STRING  CALL    LETTER
+        FALSE   L1
+        COPY
+L3      CALL    LETTER
+        FALSE   L2
+        COPY
+        EDIT    X
+        EDIT    C
+        TRUE    L3
+L2      FLAG
+L1      RETURN
+LETTER  MATCH   P
+        TRUE    T9
+        MATCH   Q
+        TRUE    T9
+        MATCH   R
+        TRUE    T9
+        MATCH   S
+T9      RETURN

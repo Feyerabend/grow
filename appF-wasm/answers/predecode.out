@@ -1,0 +1,2 @@
+the programs print the same
+wasm -m ../appF-wasm/programs/vm.wasm: 71 of 71 passed

@@ -1,0 +1,13 @@
+vm: 40 of 40 passed
+lines run: 206 of 317, 65%
+lines never run, by function:
+    32  debug
+    15  trace
+    14  show_stack
+    11  show_instruction
+    10  list
+     8  main
+     8  print_state
+     8  where
+     4  trap
+     1  step

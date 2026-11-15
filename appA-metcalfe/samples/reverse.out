@@ -1,0 +1,4 @@
+PQRS  =>  flag true; SRQP
+P  =>  flag true; P
+SRQP  =>  flag true; PQRS
+PQ7  =>  flag true, stopped at symbol 3 of 3; QP

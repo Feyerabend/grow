@@ -1,0 +1,5 @@
+; exercise 6: sum(n) = n + sum(n - 1), sum(0) = 0, recursively, of N
+        PUSH N  CALL sum 1  PRINT  HALT
+sum:    LOAD 0  JZ zero
+        LOAD 0  LOAD 0  PUSH 1  SUB  CALL sum 1  ADD  RET
+zero:   PUSH 0  RET

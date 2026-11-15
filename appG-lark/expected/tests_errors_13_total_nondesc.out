@@ -1,0 +1,2 @@
+error: fn total spin: no argument position decreases structurally at every recursive call (note: Int is a wrapping i32, so `n - 1` does not count — recurse on data, not on integers)
+status 1

@@ -1,0 +1,17 @@
+--- p4.c
++++ p4.c, mended
+@@ -447,11 +447,9 @@
+         sp--;
+         break;
+     case RLN:
+-        /* pint reads a line of input, not of prd, for readln(prd): a
+-         * mistake the book points out, kept here. */
+-        reading("readln");
+-        text_readln(&input);
+-        window(&input);
++        t = reading("readln");
++        text_readln(t);
++        window(t);
+         sp--;
+         break;
+     case NEW:           /* the length is on top, the pointer's address below */

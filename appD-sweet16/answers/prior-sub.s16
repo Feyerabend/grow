@@ -1,0 +1,9 @@
+; Exercise D.3: SET, LD, SUB, then BZ. With -t, the trace shows where
+; the machine goes after the branch.
+
+        SET R5, 3       ; the prior result is R5
+        LD R5           ; R0 := 3; the prior result is R0
+        SUB R5          ; R0 := 0
+        BZ taken        ; tests R0
+        RTN
+taken:  RTN

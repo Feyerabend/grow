@@ -1,0 +1,11 @@
+(* Benchmark: recursion that is not in tail position, so every call
+   pushes frames onto the continuation and pops them again. *)
+
+module Fib
+
+fn fib(n : Int) : Int =
+  if n < 2 then n
+  else fib(n - 1) + fib(n - 2)
+
+fn main(io : IO) : IO =
+  print(io, show(fib(32)))
